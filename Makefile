@@ -142,6 +142,33 @@ NES/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/build
 .PHONY : NES/fast
 
+src/NES.o: src/NES.cpp.o
+
+.PHONY : src/NES.o
+
+# target to build an object file
+src/NES.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.o
+.PHONY : src/NES.cpp.o
+
+src/NES.i: src/NES.cpp.i
+
+.PHONY : src/NES.i
+
+# target to preprocess a source file
+src/NES.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.i
+.PHONY : src/NES.cpp.i
+
+src/NES.s: src/NES.cpp.s
+
+.PHONY : src/NES.s
+
+# target to generate assembly for a file
+src/NES.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.s
+.PHONY : src/NES.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -178,6 +205,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NES"
+	@echo "... src/NES.o"
+	@echo "... src/NES.i"
+	@echo "... src/NES.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

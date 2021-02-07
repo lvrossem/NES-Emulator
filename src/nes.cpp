@@ -1,4 +1,4 @@
-#include "NES.h"
+#include "nes.h"
 
 void NES::initialize() {
     PC = 0;
