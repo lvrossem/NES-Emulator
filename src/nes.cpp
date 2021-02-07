@@ -1,21 +1,13 @@
 #include "nes.h"
 
 NES::NES() {
-    initialize();
+    cpu = new CPU();
 }
 
-void NES::initialize() {
-    PC = 0;
-    SP = 0;
-    A = 0;
-    X = 0;
-    Y = 0;
-    P = 0;
-
-    for (int i = 0; i < MEMORY_SIZE; i++) {
-        memory[i] = 0;
-    }
+NES::~NES() {
+    delete cpu;
 }
+
 
 iNES_header NES::parse_header(std::ifstream& input) {
     iNES_header result;
@@ -60,10 +52,12 @@ iNES_header NES::parse_header(std::ifstream& input) {
 
     result.nr_ram_banks = header[8];
 
+    // If the header says 0, it means 1
     if (result.nr_ram_banks == 0) {
         result.nr_ram_banks = 1;
     }
 
+    // Bytes 9 to 15 should be 0
     for (int i = 9; i < 16; i++) {
         if (header[i] != 0) {
             std::cout << "Invalid file header" << std::endl;
@@ -76,7 +70,6 @@ iNES_header NES::parse_header(std::ifstream& input) {
 }
 
 bool NES::load_rom(const char* rom_path) {
-    std::cout << rom_path << std::endl;
     std::ifstream input(rom_path, std::ios::binary);
     iNES_header rom_header = parse_header(input);
     return rom_header.is_valid_header;
