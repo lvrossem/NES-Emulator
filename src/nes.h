@@ -18,6 +18,9 @@ typedef struct iNES_header {
     // The number of 8 KB PRG-ROM banks, where graphics information is stored
     uint8_t nr_chr_rom_banks;
 
+    // The number of 8 KB RAM banks
+    uint8_t nr_ram_banks;
+
     // False: horizontal mirroring; True: vertical mirroring
     bool mirror_type;
 
@@ -54,14 +57,12 @@ class NES {
            Bit 7: Negative */
         uint8_t P;
 
-        // Parse the iNES-header
-        iNES_header parse_header(std::ifstream& input);
-
     public:
         NES();
 
         void initialize(); // Set all registers and entire memory to 0
         bool load_rom(const char* rom_path); // Loads the ROM into memory
+        iNES_header parse_header(std::ifstream& input); // Parse the iNES-header
 };
 
 #endif

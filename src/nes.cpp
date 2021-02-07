@@ -42,16 +42,12 @@ iNES_header NES::parse_header(std::ifstream& input) {
     uint8_t control_byte_1 = header[6];
     uint8_t control_byte_2 = header[7];
 
-    // False: horizontal mirroring; True: vertical mirroring
     result.mirror_type = (control_byte_1 & 0x80) >> 7;
 
-    // Indicates presence of battery-backed RAM
     result.has_battery_backed_ram = (control_byte_1 & 0x40) >> 6;
 
-    // Indicates the presence of a 512-byte trainer after the header
     result.has_trainer = (control_byte_1 & 0x20) >> 5;
 
-    // Indicates that four-screen mirroring should be used
     result.four_screen_mirroring = (control_byte_1 & 0x10) >> 4;
 
     if (control_byte_2 & 0xF0 == 0) {
@@ -62,12 +58,26 @@ iNES_header NES::parse_header(std::ifstream& input) {
     // Compose the mapper number from the lowest 4 bits of each control byte
     result.mapper_number = ((control_byte_2 & 0x0F) << 4) | (control_byte_1 & 0x0F);
 
+    result.nr_ram_banks = header[8];
+
+    if (result.nr_ram_banks == 0) {
+        result.nr_ram_banks = 1;
+    }
+
+    for (int i = 9; i < 16; i++) {
+        if (header[i] != 0) {
+            std::cout << "Invalid file header" << std::endl;
+            return result;
+        }
+    }
+
     result.is_valid_header = true;
     return result;
 }
 
 bool NES::load_rom(const char* rom_path) {
-    std::ifstream input(rom_path);
+    std::cout << rom_path << std::endl;
+    std::ifstream input(rom_path, std::ios::binary);
     iNES_header rom_header = parse_header(input);
     return rom_header.is_valid_header;
 }
