@@ -8,6 +8,31 @@
 #include <fstream>
 #include <iostream>
 
+typedef struct iNES_header {
+    // Indicates a valid iNES-header
+    bool is_valid_header;
+
+    // The number of 16 KB PRG-ROM banks, where program code is stored
+    uint8_t nr_prg_rom_banks;
+
+    // The number of 8 KB PRG-ROM banks, where graphics information is stored
+    uint8_t nr_chr_rom_banks;
+
+    // False: horizontal mirroring; True: vertical mirroring
+    bool mirror_type;
+
+    // Indicates presence of battery-backed RAM
+    bool has_battery_backed_ram;
+
+    // Indicates the presence of a 512-byte trainer after the header
+    bool has_trainer;
+
+    // Indicates that four-screen mirroring should be used
+    bool four_screen_mirroring;
+
+    // Compose the mapper number from the lowest 4 bits of each control byte
+    uint8_t mapper_number;
+} iNES_header;
 
 class NES {
     private:
@@ -29,12 +54,14 @@ class NES {
            Bit 7: Negative */
         uint8_t P;
 
+        // Parse the iNES-header
+        iNES_header parse_header(std::ifstream& input);
+
     public:
         NES();
-        
-        void initialize(); // Set all registers and entire memory to 0
-        bool load_rom(const char* rom_path);
 
+        void initialize(); // Set all registers and entire memory to 0
+        bool load_rom(const char* rom_path); // Loads the ROM into memory
 };
 
 #endif
