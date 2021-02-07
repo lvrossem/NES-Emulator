@@ -4,6 +4,10 @@
 #define MEMORY_SIZE 65536 // 64 KiB
 
 #include <stdint.h>
+#include <string.h>
+#include <fstream>
+#include <iostream>
+
 
 class NES {
     private:
@@ -26,7 +30,10 @@ class NES {
         uint8_t P;
 
     public:
+        NES();
+        
         void initialize(); // Set all registers and entire memory to 0
+        bool load_rom(const char* rom_path);
 
 };
 

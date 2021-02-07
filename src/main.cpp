@@ -4,9 +4,12 @@
 
 int main(int argc, char **argv) {
     char nes[4] = "NES";
-    char bits[3];
+    char bits[4];
     bits[0] = 0x4E;
-    bits[1] = 0x46;
+    bits[1] = 0x45;
     bits[2] = 0x53;
-    std::cout << "Hello NES" << std::endl << (0x4E == 'A') << std::endl;
+    bits[3] = 0x1A;
+    bool test = 1;
+    bool test2 = true;
+    std::cout << "Hello NES" << std::endl << (test != test2) << std::endl;
 }

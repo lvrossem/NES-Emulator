@@ -142,33 +142,6 @@ NES/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/build
 .PHONY : NES/fast
 
-src/NES.o: src/NES.cpp.o
-
-.PHONY : src/NES.o
-
-# target to build an object file
-src/NES.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.o
-.PHONY : src/NES.cpp.o
-
-src/NES.i: src/NES.cpp.i
-
-.PHONY : src/NES.i
-
-# target to preprocess a source file
-src/NES.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.i
-.PHONY : src/NES.cpp.i
-
-src/NES.s: src/NES.cpp.s
-
-.PHONY : src/NES.s
-
-# target to generate assembly for a file
-src/NES.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/NES.cpp.s
-.PHONY : src/NES.cpp.s
-
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -196,6 +169,33 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/nes.o: src/nes.cpp.o
+
+.PHONY : src/nes.o
+
+# target to build an object file
+src/nes.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/nes.cpp.o
+.PHONY : src/nes.cpp.o
+
+src/nes.i: src/nes.cpp.i
+
+.PHONY : src/nes.i
+
+# target to preprocess a source file
+src/nes.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/nes.cpp.i
+.PHONY : src/nes.cpp.i
+
+src/nes.s: src/nes.cpp.s
+
+.PHONY : src/nes.s
+
+# target to generate assembly for a file
+src/nes.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/nes.cpp.s
+.PHONY : src/nes.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -205,12 +205,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NES"
-	@echo "... src/NES.o"
-	@echo "... src/NES.i"
-	@echo "... src/NES.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/nes.o"
+	@echo "... src/nes.i"
+	@echo "... src/nes.s"
 .PHONY : help
 
 
