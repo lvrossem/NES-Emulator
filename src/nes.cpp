@@ -72,5 +72,48 @@ iNES_header NES::parse_header(std::ifstream& input) {
 bool NES::load_rom(const char* rom_path) {
     std::ifstream input(rom_path, std::ios::binary);
     iNES_header rom_header = parse_header(input);
-    return rom_header.is_valid_header;
+
+    if (!rom_header.is_valid_header) {
+        // Don't continue if header is invalid
+        return false;
+    }
+
+    if (rom_header.has_trainer) {
+        // Skip next 512 bytes if trainer is present
+        input.ignore(512);
+    }
+
+    // Array to store all PRG-ROM banks
+    char **prg_rom_banks = new char*[rom_header.nr_prg_rom_banks];
+
+    // Storage for CHR-ROM banks, could be 0 so we check before initializing
+    char **chr_rom_banks;
+
+    if (rom_header.nr_chr_rom_banks > 0) {
+        chr_rom_banks = new char*[rom_header.nr_chr_rom_banks];
+    }
+
+    // Read all PRG-ROM banks
+    for (int i = 0; i < rom_header.nr_prg_rom_banks; i++) {
+        prg_rom_banks[i] = new char[16 * 1024];
+        input.read(prg_rom_banks[i], 16 * 1024);
+    }
+
+    // Read all CHR-ROM banks
+    for (int i = 0; i < rom_header.nr_chr_rom_banks; i++) {
+        chr_rom_banks[i] = new char[8 * 1024];
+        input.read(chr_rom_banks[i], 8 * 1024);
+    }
+
+    if (rom_header.nr_prg_rom_banks == 1) {
+        // With only 1 PRG-ROM bank, write to both banks in memory
+        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_to_memory(prg_rom_banks[0], UPPER_PRG_ROM_START, 0x4000);
+    } else if (rom_header.nr_prg_rom_banks == 2) {
+        // With 2 PRG-ROM banks, write one to each bank in memory
+        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_to_memory(prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
+    }
+    
+    return true;
 }

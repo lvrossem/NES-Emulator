@@ -1,9 +1,12 @@
 #ifndef CPU_H
 #define CPU_H
 
-#define MEMORY_SIZE 65536 // 64 KiB
+#define MEMORY_SIZE 0x10000 // 64 KiB
+#define LOWER_PRG_ROM_START 0x8000 // Start of lower PRG-ROM bank
+#define UPPER_PRG_ROM_START 0xC000 // Start of upper PRG-ROM bank
 
 #include <stdint.h>
+#include <assert.h>
 
 class CPU {
 private:
@@ -29,6 +32,7 @@ public:
     CPU();
 
     void initialize(); // Set all registers and entire memory to 0
+    void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
 };
 
 #endif

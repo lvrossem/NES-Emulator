@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "nes.h"
+
 int main(int argc, char **argv) {
     char nes[4] = "NES";
     char bits[4];

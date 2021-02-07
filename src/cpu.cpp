@@ -16,3 +16,11 @@ void CPU::initialize() {
         cpu_memory[i] = 0;
     }
 }
+
+void CPU::write_to_memory(char* data, uint16_t start, uint16_t size) {
+    assert(MEMORY_SIZE - size >= start);
+
+    for (int i = 0; i < size; i++) {
+        cpu_memory[start + i] = data[i];
+    }
+}
