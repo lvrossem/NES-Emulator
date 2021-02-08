@@ -8,7 +8,6 @@ NES::~NES() {
     delete cpu;
 }
 
-
 iNES_header NES::parse_header(std::ifstream& input) {
     iNES_header result;
     result.is_valid_header = false;
@@ -95,14 +94,14 @@ bool NES::load_rom(const char* rom_path) {
 
     // Read all PRG-ROM banks
     for (int i = 0; i < rom_header.nr_prg_rom_banks; i++) {
-        prg_rom_banks[i] = new char[16 * 1024];
-        input.read(prg_rom_banks[i], 16 * 1024);
+        prg_rom_banks[i] = new char[0x4000];
+        input.read(prg_rom_banks[i], 0x4000);
     }
 
     // Read all CHR-ROM banks
     for (int i = 0; i < rom_header.nr_chr_rom_banks; i++) {
-        chr_rom_banks[i] = new char[8 * 1024];
-        input.read(chr_rom_banks[i], 8 * 1024);
+        chr_rom_banks[i] = new char[0x2000];
+        input.read(chr_rom_banks[i], 0x2000);
     }
 
     if (rom_header.nr_prg_rom_banks == 1) {
@@ -113,6 +112,13 @@ bool NES::load_rom(const char* rom_path) {
         // With 2 PRG-ROM banks, write one to each bank in memory
         cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
         cpu->write_to_memory(prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
+    }
+
+    if (rom_header.mapper_number == 2) {
+        // UNROM Switch is used; load first and last PRG-ROM bank into memory
+        uint8_t last_bank_index = rom_header.nr_prg_rom_banks - 1;
+        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_to_memory(prg_rom_banks[last_bank_index], UPPER_PRG_ROM_START, 0x4000);
     }
     
     return true;
