@@ -15,7 +15,7 @@ typedef struct iNES_header {
     // The number of 16 KB PRG-ROM banks, where program code is stored
     uint8_t nr_prg_rom_banks;
 
-    // The number of 8 KB PRG-ROM banks, where graphics information is stored
+    // The number of 8 KB CHR-ROM banks, where graphics information is stored
     uint8_t nr_chr_rom_banks;
 
     // The number of 8 KB RAM banks

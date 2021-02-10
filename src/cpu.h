@@ -4,6 +4,7 @@
 #define MEMORY_SIZE 0x10000 // 64 KiB
 #define LOWER_PRG_ROM_START 0x8000 // Start of lower PRG-ROM bank
 #define UPPER_PRG_ROM_START 0xC000 // Start of upper PRG-ROM bank
+#define IO_REGISTERS_START 0x2000 // Address of the first IO-register
 
 #include <stdint.h>
 #include <assert.h>
@@ -33,6 +34,8 @@ public:
 
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
+    uint8_t next_prg_byte();
+    void execute();
 };
 
 #endif
