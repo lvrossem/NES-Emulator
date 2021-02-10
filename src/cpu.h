@@ -39,10 +39,13 @@ public:
     void flip_overflow(); // Flip the overflow flag in the status register
     void flip_negative(); // Flip the negative flag in the status register
 
+    void handle_status_ADC(uint8_t arg); // Handle status register changes caused by ADC
+
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
-    uint8_t next_prg_byte(); // Read the next byte from the program code
     void execute();
+
+    uint8_t next_prg_byte(); // Read the next byte from the program code
 };
 
 #endif
