@@ -24,3 +24,31 @@ void CPU::write_to_memory(char* data, uint16_t start, uint16_t size) {
         cpu_memory[start + i] = data[i];
     }
 }
+
+void CPU::flip_carry() {
+    P ^= 0b10000000;
+}
+
+void CPU::flip_zero() {
+    P ^= 0b01000000;
+}
+
+void CPU::flip_interrupt_disable() {
+    P ^= 0b00100000;
+} 
+
+void CPU::flip_break() {
+    P ^= 0b00001000;
+} 
+
+void CPU::flip_overflow() {
+    P ^= 0b00000010;
+}
+
+void CPU::flip_negative(){
+    P ^= 0b00000001;
+}
+
+uint8_t CPU::next_prg_byte() {
+    return cpu_memory[PC++];
+}

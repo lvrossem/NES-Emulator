@@ -32,9 +32,16 @@ private:
 public:
     CPU();
 
+    void flip_carry(); // Flip the carry flag in the status register
+    void flip_zero(); // Flip the zero flag in the status register
+    void flip_interrupt_disable(); // Flip the interrupt disable flag in the status register
+    void flip_break(); // Flip the break flag in the status register
+    void flip_overflow(); // Flip the overflow flag in the status register
+    void flip_negative(); // Flip the negative flag in the status register
+
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
-    uint8_t next_prg_byte();
+    uint8_t next_prg_byte(); // Read the next byte from the program code
     void execute();
 };
 
