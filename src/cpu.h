@@ -69,9 +69,11 @@ public:
     void execute(); // Determine type of instruction and execute said instruction
     void execute_1A(uint8_t opcode); // Execute instruction of type 1A
     void execute_1B(uint8_t opcode); // Execute instruction of type 1B
+    void execute_2A(uint8_t opcode); // Execute instruction of type 2A
 
     void handle_registers_1A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 1A-instruction
     void handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t address, bool acc_only, bool immediate); // Manipulate registers affected by 1B-instruction
+    void handle_registers_2A(Instruction instruction, uint16_t address); // Manipulate registers affected by 2A-instruction
 
     uint8_t next_prg_byte(); // Read the next byte from the program code
 };

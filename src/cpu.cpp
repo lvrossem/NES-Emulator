@@ -47,10 +47,15 @@ void CPU::execute() {
     if (group_1A.count(static_cast<Instruction>(opcode & 0xE3)) == 1) {
         // Instruction is of type 1A
         execute_1A(opcode);
+
     } else if (group_1B.count(static_cast<Instruction>(opcode & 0xE3)) == 1) {
         // Instruction is of type 1B
+        execute_1B(opcode);
+
     } else if (group_2A.count(static_cast<Instruction>(opcode & 0xE7)) == 1) {
         // Instruction is of type 2A
+        execute_2A(opcode);
+
     } else if (group_2B.count(static_cast<Instruction>(opcode & 0xF3)) == 1) {
         // Instruction is of type 2B
     } else if (group_3A.count(static_cast<Instruction>(opcode & 0xF7)) == 1) {
@@ -212,6 +217,58 @@ void CPU::execute_1B(uint8_t opcode) {
     }
 
     handle_registers_1B(instruction, arg, address, acc_only, immediate);
+}
+
+void CPU::execute_2A(uint8_t opcode) {
+    Instruction instruction = static_cast<Instruction>(opcode & 0xE7);
+
+    // Operand needed to execute; determined based on addressing method
+    uint16_t address = 0;
+    bool acc_only = false;
+    bool immediate = false;
+
+    switch ((opcode & 0x18) >> 3) {
+        case 0b00: {
+            // Zero page
+            address = next_prg_byte();
+
+            break;
+        }
+
+        case 0b01: {
+            // Absolute
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            address = ((uint16_t) upper_arg << 8) | lower_arg;
+
+            break;
+        }
+
+        case 0b10: {
+            // Zero page X (Y in STX)
+            uint8_t next = next_prg_byte();
+            address = instruction == STX ? next + Y : next + X;
+
+            break;
+        }
+
+        case 0b11: {
+            // Absolute X
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            address = (((uint16_t) upper_arg << 8) | lower_arg) + X;
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 2A opcode" << std::endl;
+        }
+    }
+
+    handle_registers_2A(instruction, address);
 }
 
 void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
@@ -409,6 +466,46 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
 
         default: {
             std::cout << "Unknown 1B instruction" << std::endl;
+        }
+    }
+}
+
+void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
+    switch (instruction) {
+        case DEC: {
+            // DEC instruction
+            cpu_memory[address] -= 1;
+            set_status_bit(Zero, cpu_memory[address] == 0);
+            set_status_bit(Negative, get_bit_by_index(cpu_memory[address], 0) == 1);
+
+            break;
+        }
+
+        case INC: {
+            // INC instruction
+            cpu_memory[address] += 1;
+            set_status_bit(Zero, cpu_memory[address] == 0);
+            set_status_bit(Negative, get_bit_by_index(cpu_memory[address], 0) == 1);
+
+            break;
+        }
+
+        case STX: {
+            // STX instruction
+            cpu_memory[address] = X;
+
+            break;
+        }
+
+        case STY: {
+            // STY instruction
+            cpu_memory[address] = Y;
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 2A instruction" << std::endl;
         }
     }
 }
