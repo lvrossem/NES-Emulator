@@ -139,9 +139,11 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
     switch (instruction) {
         case ADC: {
             // ADC instruction
-            // TODO: add carry bit
-            set_status_bit(Carry, 0xFF - arg < A);
-            A += arg;
+            bool carry = get_status_bit(Carry);
+            // Set overflow if both operands are negative or positive
+            set_status_bit(Overflow, ((arg + carry) & 0x80) == (A & 0x80));
+            set_status_bit(Carry, 0xFF - A < arg + carry);
+            A += arg + carry;
             set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
             set_status_bit(Zero, A == 0);
 
@@ -194,7 +196,15 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
 
         case SBC: {
             // SBC instruction
-            
+            // SBC n is identical to ADC (n EOR 0xFF)
+            arg ^= 0xFF;
+            bool carry = get_status_bit(Carry);
+            set_status_bit(Overflow, ((arg + carry) & 0x80) == (A & 0x80));
+            set_status_bit(Carry, 0xFF - A < arg + carry);
+            A += arg + carry;
+
+            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Zero, A == 0);
             
             break;
         }
