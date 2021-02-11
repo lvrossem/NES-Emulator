@@ -25,33 +25,13 @@ void CPU::write_to_memory(char* data, uint16_t start, uint16_t size) {
     }
 }
 
-void CPU::flip_carry() {
-    P ^= 0b10000000;
-}
-
-void CPU::flip_zero() {
-    P ^= 0b01000000;
-}
-
-void CPU::flip_interrupt_disable() {
-    P ^= 0b00100000;
-} 
-
-void CPU::flip_break() {
-    P ^= 0b00001000;
-} 
-
-void CPU::flip_overflow() {
-    P ^= 0b00000010;
-}
-
-void CPU::flip_negative() {
-    P ^= 0b00000001;
+void CPU::set_status_bit(StatusBit bit, bool flag) {
+    P = flag ? P | (0b00000001 << bit) : P & (0b11111110 << bit);
 }
 
 void CPU::handle_status_ADC(uint8_t arg) {
     if (0xFF - arg < A) {
-        flip_carry();
+        set_status_bit(Carry, true);
     }
 
     A += arg;

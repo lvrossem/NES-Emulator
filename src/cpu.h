@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
+
 class CPU {
 private:
     uint8_t cpu_memory[MEMORY_SIZE]; // The available memory
@@ -32,12 +34,7 @@ private:
 public:
     CPU();
 
-    void flip_carry(); // Flip the carry flag in the status register
-    void flip_zero(); // Flip the zero flag in the status register
-    void flip_interrupt_disable(); // Flip the interrupt disable flag in the status register
-    void flip_break(); // Flip the break flag in the status register
-    void flip_overflow(); // Flip the overflow flag in the status register
-    void flip_negative(); // Flip the negative flag in the status register
+    void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
 
     void handle_status_ADC(uint8_t arg); // Handle status register changes caused by ADC
 
