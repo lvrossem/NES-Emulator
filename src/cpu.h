@@ -12,20 +12,20 @@
 
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
 enum Instruction {
-    ADC, AND, CMP, EOR,
-    LDA, ORA, SBC, STA,
-    ASL, LDX, LDY, LSR,
-    ROL, ROR, DEC, INC,
-    STX, STY, CPX, CPY,
-    BIT, JMP, BCC, BCS,
-    BEQ, BMI, BNE, BPL,
-    BRK, BVC, BVS, CLC,
-    CLD, CLI, CLV, DEX,
-    DEY, INX, INY, NOP,
-    PHA, PHP, PLA, PLP,
-    RTI, RTS, SEC, SED,
-    SEI, TAX, TAY, TSX,
-    TXA, TXS, TYA, JSR
+    ADC = 0x61, AND = 0x21, CMP = 0xC1, EOR = 0x41,
+    LDA = 0xA1, ORA = 0x01, SBC = 0xE1, STA = 0x81,
+    ASL = 0x02, LDX = 0xA2, LDY = 0xA0, LSR = 0x42,
+    ROL = 0x22, ROR = 0x62, DEC = 0xC6, INC = 0xE6,
+    STX = 0x86, STY = 0x84, CPX = 0xE0, CPY = 0xC0,
+    BIT = 0x24, JMP = 0x4C, BCC = 0x90, BCS = 0xB0,
+    BEQ = 0xF0, BMI = 0x30, BNE = 0xD0, BPL = 0x10,
+    BRK = 0x00, BVC = 0x50, BVS = 0x70, CLC = 0x18,
+    CLD = 0xD8, CLI = 0x58, CLV = 0xB8, DEX = 0xCA,
+    DEY = 0x88, INX = 0xE8, INY = 0xC8, NOP = 0xEA,
+    PHA = 0x48, PHP = 0x08, PLA = 0x68, PLP = 0x28,
+    RTI = 0x40, RTS = 0x60, SEC = 0x38, SED = 0xF8,
+    SEI = 0x78, TAX = 0xAA, TAY = 0xA8, TSX = 0xBA,
+    TXA = 0x8A, TXS = 0x9A, TYA = 0x98, JSR = 0x20
 };
 
 class CPU {
