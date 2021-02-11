@@ -60,6 +60,7 @@ public:
     CPU();
 
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
+    bool get_status_bit(StatusBit bit); // Gets a statusbit from P
 
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory

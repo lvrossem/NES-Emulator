@@ -29,6 +29,10 @@ void CPU::set_status_bit(StatusBit bit, bool flag) {
     P = flag ? P | (0b00000001 << bit) : P & (0b11111110 << bit);
 }
 
+bool CPU::get_status_bit(StatusBit bit) {
+    return (P >> bit) & 0b00000001;
+} 
+
 uint8_t CPU::next_prg_byte() {
     return cpu_memory[PC++];
 }
@@ -56,6 +60,8 @@ void CPU::execute() {
 
 void CPU::execute_1A(uint8_t opcode) {
     Instruction instruction = static_cast<Instruction>(opcode & 0xE3);
+
+    // Operand needed to execute; determined based on addressing method
     uint8_t arg;
     switch ((opcode & 0x1C) >> 2) {
         case 0b010: {
@@ -133,11 +139,12 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
     switch (instruction) {
         case ADC: {
             // ADC instruction
-            if (0xFF - arg < A) {
-                set_status_bit(Carry, true);
-            }
-
+            // TODO: add carry bit
+            set_status_bit(Carry, 0xFF - arg < A);
             A += arg;
+            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Zero, A == 0);
+
             break;
         }
 
@@ -145,6 +152,57 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
             // AND instruction
             A &= arg;
             set_status_bit(Zero, A == 0);
+            
+            break;
+        }
+
+        case CMP: {
+            // CMP instruction
+            set_status_bit(Zero, A == arg);
+            set_status_bit(Carry, arg <= A);
+            set_status_bit(Negative, (((A - arg) & 0x80) >> 7) == 1);
+
+            break;
+        }
+
+        case EOR: {
+            // EOR instruction
+            A ^= arg;
+            set_status_bit(Zero, A == 0);
+            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+
+            break;
+        }
+
+        case LDA: {
+            // LDA instruction
+            A = arg;
+            set_status_bit(Zero, A == 0);
+            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+
+            break;
+        }
+
+        case ORA: {
+            // ORA instruction
+            A |= arg;
+            set_status_bit(Zero, A == 0);
+            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+
+            break;
+        }
+
+        case SBC: {
+            // SBC instruction
+            
+            
+            break;
+        }
+
+        case STA: {
+            // STA instruction
+            cpu_memory[arg] = A;
+
             break;
         }
     }
