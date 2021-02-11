@@ -37,6 +37,7 @@ public:
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
 
     void handle_status_ADC(uint8_t arg); // Handle status register changes caused by ADC
+    void handle_status_AND(uint8_t arg); // Handle status register changes caused by AND
 
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
