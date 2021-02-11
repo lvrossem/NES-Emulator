@@ -8,7 +8,8 @@
 
 #include <stdint.h>
 #include <assert.h>
-#include <vector>
+#include <set>
+#include <iostream>
 
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
 enum Instruction {
@@ -48,25 +49,25 @@ private:
         Bit 7: Negative */
     uint8_t P;
 
-    const std::vector<Instruction> group_1A {ADC, AND, CMP, EOR, LDA, ORA, SBC, STA};
-    const std::vector<Instruction> group_1B {ASL, LDX, LDY, LSR, ROL, ROR};
-    const std::vector<Instruction> group_2A {DEC, INC, STX, STY};
-    const std::vector<Instruction> group_2B {CPX, CPY};
-    const std::vector<Instruction> group_3A {BIT};
-    const std::vector<Instruction> group_3B {JMP};
+    const std::set<Instruction> group_1A {ADC, AND, CMP, EOR, LDA, ORA, SBC, STA};
+    const std::set<Instruction> group_1B {ASL, LDX, LDY, LSR, ROL, ROR};
+    const std::set<Instruction> group_2A {DEC, INC, STX, STY};
+    const std::set<Instruction> group_2B {CPX, CPY};
+    const std::set<Instruction> group_3A {BIT};
+    const std::set<Instruction> group_3B {JMP};
 
 public:
     CPU();
 
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
 
-    void handle_status_ADC(uint8_t arg); // Handle status register changes caused by ADC
-    void handle_status_AND(uint8_t arg); // Handle status register changes caused by AND
-    void handle_status_CMP(uint8_t arg); // Handle status register changes caused by CMP
-
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
-    void execute();
+
+    void execute(); // Determine type of instruction and execute said instruction
+    void execute_1A(uint8_t opcode); // Execute instruction of type 1A
+
+    void handle_registers_1A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 1A-instruction
 
     uint8_t next_prg_byte(); // Read the next byte from the program code
 };
