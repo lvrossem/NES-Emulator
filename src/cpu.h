@@ -61,14 +61,17 @@ public:
 
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
     bool get_status_bit(StatusBit bit); // Gets a statusbit from P
+    bool get_bit_by_index(uint8_t arg, uint8_t i); // Get the value of bit i in arg
 
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
 
     void execute(); // Determine type of instruction and execute said instruction
     void execute_1A(uint8_t opcode); // Execute instruction of type 1A
+    void execute_1B(uint8_t opcode); // Execute instruction of type 1B
 
     void handle_registers_1A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 1A-instruction
+    void handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t address, bool acc_only, bool immediate); // Manipulate registers affected by 1B-instruction
 
     uint8_t next_prg_byte(); // Read the next byte from the program code
 };

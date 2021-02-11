@@ -13,5 +13,5 @@ int main(int argc, char **argv) {
     bits[3] = 0x1A;
     bool test = 1;
     bool test2 = true;
-    std::cout << "Hello NES" << std::endl << (test != test2) << std::endl;
+    std::cout << "Hello NES" << std::endl << (0x80 * true) << std::endl;
 }
