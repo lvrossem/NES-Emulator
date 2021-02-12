@@ -60,11 +60,14 @@ private:
     void execute_1B(uint8_t opcode); // Execute instruction of type 1B
     void execute_2A(uint8_t opcode); // Execute instruction of type 2A
     void execute_2B(uint8_t opcode); // Execute instruction of type 2B
+    void execute_3A(uint8_t opcode); // Execute instruction of type 3A
+    void execute_3B(uint8_t opcode); // Execute instruction of type 3B
 
     void handle_registers_1A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 1A-instruction
     void handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t address, bool acc_only, bool immediate); // Manipulate registers affected by 1B-instruction
     void handle_registers_2A(Instruction instruction, uint16_t address); // Manipulate registers affected by 2A-instruction
     void handle_registers_2B(Instruction instruction, uint8_t arg); // Manipulate registers affected by 2B-instruction
+    void handle_registers_3A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 3A-instruction
 
 public:
     CPU();
@@ -72,6 +75,8 @@ public:
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
     bool get_status_bit(StatusBit bit); // Gets a statusbit from P
     bool get_bit_by_index(uint8_t arg, uint8_t i); // Get the value of bit i in arg
+
+    uint16_t merge_uint8_t(uint8_t upper, uint8_t lower); // Combine upper and lower into one uint16_t
 
     void initialize(); // Set all registers and entire memory to 0
     void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory

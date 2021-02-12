@@ -37,6 +37,10 @@ bool CPU::get_bit_by_index(uint8_t arg, uint8_t i) {
     return (arg & (0x01 << (7 - i))) >> i;
 }
 
+uint16_t CPU::merge_uint8_t(uint8_t upper, uint8_t lower) {
+    return ((uint16_t) upper << 8) | lower;
+}
+
 uint8_t CPU::next_prg_byte() {
     return cpu_memory[PC++];
 }
@@ -92,7 +96,7 @@ void CPU::execute_1A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            uint16_t total_arg = ((uint16_t) upper_arg << 8) | lower_arg;
+            uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
             arg = cpu_memory[total_arg];
             break;
@@ -109,7 +113,7 @@ void CPU::execute_1A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            uint16_t total_arg = ((uint16_t) upper_arg << 8) | lower_arg;
+            uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
             arg = cpu_memory[total_arg + X];
             break;
@@ -120,7 +124,7 @@ void CPU::execute_1A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            uint16_t total_arg = ((uint16_t) upper_arg << 8) | lower_arg;
+            uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
             arg = cpu_memory[total_arg + Y];
             break;
@@ -183,7 +187,7 @@ void CPU::execute_1B(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            address = ((uint16_t) upper_arg << 8) | lower_arg;
+            address = merge_uint8_t(upper_arg, lower_arg);
 
             break;
         }
@@ -205,9 +209,9 @@ void CPU::execute_1B(uint8_t opcode) {
             uint8_t upper_arg = next_prg_byte();
 
             if (instruction != LDX) {
-                address = (((uint16_t) upper_arg << 8) | lower_arg) + X;
+                address = merge_uint8_t(upper_arg, lower_arg) + X;
             } else {
-                address = (((uint16_t) upper_arg << 8) | lower_arg) + Y;
+                address = merge_uint8_t(upper_arg, lower_arg) + Y;
             }
 
             break;
@@ -242,7 +246,7 @@ void CPU::execute_2A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            address = ((uint16_t) upper_arg << 8) | lower_arg;
+            address = merge_uint8_t(upper_arg, lower_arg);
 
             break;
         }
@@ -260,7 +264,7 @@ void CPU::execute_2A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            address = (((uint16_t) upper_arg << 8) | lower_arg) + X;
+            address = merge_uint8_t(upper_arg, lower_arg) + X;
 
             break;
         }
@@ -296,17 +300,51 @@ void CPU::execute_2B(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            arg = cpu_memory[((uint16_t) upper_arg << 8) | lower_arg];
+            arg = cpu_memory[merge_uint8_t(upper_arg, lower_arg)];
 
             break;
         }
 
         default: {
-            std::cout << "Unknown 2A opcode" << std::endl;
+            std::cout << "Unknown 2B opcode" << std::endl;
         }
     }
 
     handle_registers_2B(instruction, arg);
+}
+
+void CPU::execute_3A(uint8_t opcode) {
+    Instruction instruction = static_cast<Instruction>(opcode & 0xF7);
+
+    uint8_t arg;
+    switch ((opcode & 0x08) >> 3) {
+        case 0b0: {
+            // Zero page
+            arg = cpu_memory[next_prg_byte()];
+
+            break;
+        }
+
+        case 0b1: {
+            // Absolute
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            arg = cpu_memory[merge_uint8_t(upper_arg, lower_arg)];
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 3A opcode" << std::endl;
+        }
+    }
+
+    handle_registers_3A(instruction, arg);
+}
+
+void CPU::execute_3B(uint8_t opcode) {
+
 }
 
 void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
@@ -570,6 +608,24 @@ void CPU::handle_registers_2B(Instruction instruction, uint8_t arg) {
 
         default: {
             std::cout << "Unknown 2B instruction" << std::endl;
+        }
+    }
+}
+
+void CPU::handle_registers_3A(Instruction instruction, uint8_t arg) {
+    switch (instruction) {
+        case BIT: {
+            uint8_t result = arg & A;
+
+            set_status_bit(Zero, result == 0);
+            set_status_bit(Overflow, get_bit_by_index(result , 6));
+            set_status_bit(Negative, get_bit_by_index(result, 7));
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 3A instruction" << std::endl;
         }
     }
 }
