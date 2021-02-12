@@ -66,10 +66,15 @@ void CPU::execute() {
 
     } else if (group_3A.count(static_cast<Instruction>(opcode & 0xF7)) == 1) {
         // Instruction is of type 3A
+        execute_3A(opcode);
+
     } else if (group_3B.count(static_cast<Instruction>(opcode & 0xDF)) == 1) {
         // Instruction is of type 3B
+        execute_3B(opcode);
+
     } else {
         // Instruction is of type 4
+        execute_4(opcode);
     }
 }
 
