@@ -6,7 +6,7 @@ CPU::CPU() {
 
 void CPU::initialize() {
     PC = 0;
-    SP = 0;
+    SP = TOP_OF_STACK;
     A = 0;
     X = 0;
     Y = 0;
@@ -529,31 +529,52 @@ void CPU::execute_4(uint8_t opcode) {
 
         case PHA: {
             // PHA instruction
+            cpu_memory[SP] = A;
+            SP -= 1;
+
             break;
         }
 
         case PHP: {
-            // BCS instruction
+            // PHP instruction
+            cpu_memory[SP] = P;
+            SP -= 1;
+
             break;
         }
 
         case PLA: {
-            // BCS instruction
+            // PLA instruction
+            A = cpu_memory[SP];
+            SP += 1;
+
             break;
         }
 
         case PLP: {
-            // BCS instruction
+            // PLP instruction
+            P = cpu_memory[SP];
+            SP += 1;
+
             break;
         }
 
         case RTI: {
-            // BCS instruction
+            // RTI instruction
+            P = cpu_memory[SP];
+            PC = cpu_memory[SP + 1];
+            SP += 2;
+
             break;
         }
 
         case RTS: {
-            // BCS instruction
+            // RTS instruction
+            // TODO Fix issue with PC being 2 bytes long
+            PC = cpu_memory[SP];
+            SP += 2;
+            PC += 1;
+
             break;
         }
 
@@ -632,6 +653,18 @@ void CPU::execute_4(uint8_t opcode) {
 
         case JSR: {
             // JSR instruction
+            uint8_t lower_PC = static_cast<uint8_t>((PC + 2) & 0x00FF);
+            uint8_t upper_PC = static_cast<uint8_t>(((PC + 2) & 0xFF00) >> 8);
+
+            cpu_memory[SP] = upper_PC;
+            cpu_memory[SP + 1] = lower_PC;
+            SP += 2;
+
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            PC = merge_uint8_t(upper_arg, lower_arg);
+
             break;
         }
 
