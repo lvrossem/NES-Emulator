@@ -62,12 +62,14 @@ private:
     void execute_2B(uint8_t opcode); // Execute instruction of type 2B
     void execute_3A(uint8_t opcode); // Execute instruction of type 3A
     void execute_3B(uint8_t opcode); // Execute instruction of type 3B
+    void execute_4(uint8_t opcode); // Execute instruction of type 4
 
     void handle_registers_1A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 1A-instruction
     void handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t address, bool acc_only, bool immediate); // Manipulate registers affected by 1B-instruction
     void handle_registers_2A(Instruction instruction, uint16_t address); // Manipulate registers affected by 2A-instruction
     void handle_registers_2B(Instruction instruction, uint8_t arg); // Manipulate registers affected by 2B-instruction
     void handle_registers_3A(Instruction instruction, uint8_t arg); // Manipulate registers affected by 3A-instruction
+    void handle_registers_3B(Instruction instruction, uint8_t arg); // Manipulate registers affected by 3B-instruction
 
 public:
     CPU();

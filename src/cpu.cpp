@@ -344,7 +344,36 @@ void CPU::execute_3A(uint8_t opcode) {
 }
 
 void CPU::execute_3B(uint8_t opcode) {
+    Instruction instruction = static_cast<Instruction>(opcode & 0xDF);
 
+    uint8_t arg;
+    switch ((opcode & 0x20) >> 5) {
+        case 0b0: {
+            // Absolute
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            arg = merge_uint8_t(upper_arg, lower_arg);
+
+            break;
+        }
+
+        case 0b1: {
+            // Indirect
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            arg = cpu_memory[merge_uint8_t(upper_arg, lower_arg)];
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 3B opcode" << std::endl;
+        }
+    }
+
+    handle_registers_3B(instruction, arg);
 }
 
 void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
@@ -626,6 +655,20 @@ void CPU::handle_registers_3A(Instruction instruction, uint8_t arg) {
 
         default: {
             std::cout << "Unknown 3A instruction" << std::endl;
+        }
+    }
+}
+
+void CPU::handle_registers_3B(Instruction instruction, uint8_t arg) {
+    switch (instruction) {
+        case JMP: {
+            PC = arg;
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 3B instruction" << std::endl;
         }
     }
 }
