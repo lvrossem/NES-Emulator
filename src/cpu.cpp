@@ -376,6 +376,190 @@ void CPU::execute_3B(uint8_t opcode) {
     handle_registers_3B(instruction, arg);
 }
 
+void CPU::execute_4(uint8_t opcode) {
+    Instruction instruction = static_cast<Instruction>(opcode);
+
+    switch (instruction) {
+        case BCC: {
+            // BCC instruction
+            if (get_status_bit(Carry)) {
+                PC += next_prg_byte();
+            }
+
+            break;
+        }
+
+        case BCS: {
+            // BCS instruction
+            break;
+        }
+
+        case BEQ: {
+            // BEQ instruction
+            break;
+        }
+
+        case BMI: {
+            // BMI instruction
+            break;
+        }
+
+        case BNE: {
+            // BNE instruction
+            break;
+        }
+
+        case BPL: {
+            // BPL instruction
+            break;
+        }
+
+        case BRK: {
+            // BRK instruction
+            break;
+        }
+
+        case BVC: {
+            // BVC instruction
+            break;
+        }
+
+        case BVS: {
+            // BVS instruction
+            break;
+        }
+
+        case CLC: {
+            // CLC instruction
+            break;
+        }
+
+        case CLD: {
+            // CLD instruction
+            break;
+        }
+
+        case CLI: {
+            // CLI instruction
+            break;
+        }
+
+        case CLV: {
+            // CLV instruction
+            break;
+        }
+
+        case DEX: {
+            // DEX instruction
+            break;
+        }
+
+        case DEY: {
+            // DEY instruction
+            break;
+        }
+
+        case INX: {
+            // BCS instruction
+            break;
+        }
+
+        case INY: {
+            // BCS instruction
+            break;
+        }
+
+        case NOP: {
+            // BCS instruction
+            break;
+        }
+
+        case PHA: {
+            // BCS instruction
+            break;
+        }
+
+        case PHP: {
+            // BCS instruction
+            break;
+        }
+
+        case PLA: {
+            // BCS instruction
+            break;
+        }
+
+        case PLP: {
+            // BCS instruction
+            break;
+        }
+
+        case RTI: {
+            // BCS instruction
+            break;
+        }
+
+        case RTS: {
+            // BCS instruction
+            break;
+        }
+
+        case SEC: {
+            // BCS instruction
+            break;
+        }
+
+        case SED: {
+            // BCS instruction
+            break;
+        }
+
+        case SEI: {
+            // BCS instruction
+            break;
+        }
+
+        case TAX: {
+            // BCS instruction
+            break;
+        }
+
+        case TAY: {
+            // BCS instruction
+            break;
+        }
+
+        case TSX: {
+            // BCS instruction
+            break;
+        }
+
+        case TXA: {
+            // BCS instruction
+            break;
+        }
+
+        case TXS: {
+            // BCS instruction
+            break;
+        }
+
+        case TYA: {
+            // BCS instruction
+            break;
+        }
+
+        case JSR: {
+            // BCS instruction
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 4 opcode" << std::endl;
+        }
+    }
+}
+
 void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
     switch (instruction) {
         case ADC: {
