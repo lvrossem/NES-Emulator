@@ -142,6 +142,60 @@ NES/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/build
 .PHONY : NES/fast
 
+src/cpu.o: src/cpu.cpp.o
+
+.PHONY : src/cpu.o
+
+# target to build an object file
+src/cpu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu.cpp.o
+.PHONY : src/cpu.cpp.o
+
+src/cpu.i: src/cpu.cpp.i
+
+.PHONY : src/cpu.i
+
+# target to preprocess a source file
+src/cpu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu.cpp.i
+.PHONY : src/cpu.cpp.i
+
+src/cpu.s: src/cpu.cpp.s
+
+.PHONY : src/cpu.s
+
+# target to generate assembly for a file
+src/cpu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu.cpp.s
+.PHONY : src/cpu.cpp.s
+
+src/cpu_memory.o: src/cpu_memory.cpp.o
+
+.PHONY : src/cpu_memory.o
+
+# target to build an object file
+src/cpu_memory.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu_memory.cpp.o
+.PHONY : src/cpu_memory.cpp.o
+
+src/cpu_memory.i: src/cpu_memory.cpp.i
+
+.PHONY : src/cpu_memory.i
+
+# target to preprocess a source file
+src/cpu_memory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu_memory.cpp.i
+.PHONY : src/cpu_memory.cpp.i
+
+src/cpu_memory.s: src/cpu_memory.cpp.s
+
+.PHONY : src/cpu_memory.s
+
+# target to generate assembly for a file
+src/cpu_memory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/cpu_memory.cpp.s
+.PHONY : src/cpu_memory.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -196,6 +250,33 @@ src/nes.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/nes.cpp.s
 .PHONY : src/nes.cpp.s
 
+src/ppu.o: src/ppu.cpp.o
+
+.PHONY : src/ppu.o
+
+# target to build an object file
+src/ppu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/ppu.cpp.o
+.PHONY : src/ppu.cpp.o
+
+src/ppu.i: src/ppu.cpp.i
+
+.PHONY : src/ppu.i
+
+# target to preprocess a source file
+src/ppu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/ppu.cpp.i
+.PHONY : src/ppu.cpp.i
+
+src/ppu.s: src/ppu.cpp.s
+
+.PHONY : src/ppu.s
+
+# target to generate assembly for a file
+src/ppu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/src/ppu.cpp.s
+.PHONY : src/ppu.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -205,12 +286,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NES"
+	@echo "... src/cpu.o"
+	@echo "... src/cpu.i"
+	@echo "... src/cpu.s"
+	@echo "... src/cpu_memory.o"
+	@echo "... src/cpu_memory.i"
+	@echo "... src/cpu_memory.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/nes.o"
 	@echo "... src/nes.i"
 	@echo "... src/nes.s"
+	@echo "... src/ppu.o"
+	@echo "... src/ppu.i"
+	@echo "... src/ppu.s"
 .PHONY : help
 
 

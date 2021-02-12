@@ -12,6 +12,8 @@
 #include <set>
 #include <iostream>
 
+#include "cpu_memory.h"
+
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
 enum Instruction {
     ADC = 0x61, AND = 0x21, CMP = 0xC1, EOR = 0x41,
@@ -32,9 +34,7 @@ enum Instruction {
 
 class CPU {
 private:
-    uint8_t cpu_memory[MEMORY_SIZE]; // The available memory
-
-    const uint16_t TOP_OF_STACK = 0x01FF; // Address of the top of the stack
+    CPUMemory* cpu_memory; // The available memory
 
     uint16_t PC; // The program counter
     uint8_t SP; // The stack pointer
