@@ -58,6 +58,8 @@ void CPU::execute() {
 
     } else if (group_2B.count(static_cast<Instruction>(opcode & 0xF3)) == 1) {
         // Instruction is of type 2B
+        execute_2B(opcode);
+
     } else if (group_3A.count(static_cast<Instruction>(opcode & 0xF7)) == 1) {
         // Instruction is of type 3A
     } else if (group_3B.count(static_cast<Instruction>(opcode & 0xDF)) == 1) {
@@ -271,6 +273,42 @@ void CPU::execute_2A(uint8_t opcode) {
     handle_registers_2A(instruction, address);
 }
 
+void CPU::execute_2B(uint8_t opcode) {
+    Instruction instruction = static_cast<Instruction>(opcode & 0xF3);
+
+    uint8_t arg;
+    switch ((opcode & 0x0C) >> 2) {
+        case 0b00: {
+            // Immediate
+            arg = next_prg_byte();
+
+            break;
+        }
+
+        case 0b01: {
+            // Zero page
+            arg = cpu_memory[next_prg_byte()];
+            break;
+        }
+
+        case 0b11: {
+            // Absolute
+            uint8_t lower_arg = next_prg_byte();
+            uint8_t upper_arg = next_prg_byte();
+
+            arg = cpu_memory[((uint16_t) upper_arg << 8) | lower_arg];
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 2A opcode" << std::endl;
+        }
+    }
+
+    handle_registers_2B(instruction, arg);
+}
+
 void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
     switch (instruction) {
         case ADC: {
@@ -310,7 +348,7 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
             // EOR instruction
             A ^= arg;
             set_status_bit(Zero, A == 0);
-            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
 
             break;
         }
@@ -319,7 +357,7 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
             // LDA instruction
             A = arg;
             set_status_bit(Zero, A == 0);
-            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
 
             break;
         }
@@ -328,7 +366,7 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
             // ORA instruction
             A |= arg;
             set_status_bit(Zero, A == 0);
-            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
 
             break;
         }
@@ -345,7 +383,7 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
 
             A += arg + carry;
 
-            set_status_bit(Negative, ((A & 0x80) >> 7) == 1);
+            set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
             set_status_bit(Zero, A == 0);
             
             break;
@@ -506,6 +544,32 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
 
         default: {
             std::cout << "Unknown 2A instruction" << std::endl;
+        }
+    }
+}
+
+void CPU::handle_registers_2B(Instruction instruction, uint8_t arg) {
+    switch (instruction) {
+        case CPX: {
+            // CPX instruction
+            set_status_bit(Negative, get_bit_by_index(X - arg, 7));
+            set_status_bit(Zero, X == arg);
+            set_status_bit(Carry, X >= arg);
+
+            break;
+        }
+
+        case CPY: {
+            // CPY instruction
+            set_status_bit(Negative, get_bit_by_index(Y - arg, 7));
+            set_status_bit(Zero, Y == arg);
+            set_status_bit(Carry, Y >= arg);
+
+            break;
+        }
+
+        default: {
+            std::cout << "Unknown 2B instruction" << std::endl;
         }
     }
 }
