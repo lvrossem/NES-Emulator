@@ -13,5 +13,6 @@ int main(int argc, char **argv) {
     bits[3] = 0x1A;
     bool test = 1;
     bool test2 = true;
-    std::cout << "Hello NES" << std::endl << (0x80 * true) << std::endl;
+    uint8_t z = 0xFA;
+    std::cout << "Hello NES" << std::endl << (z + 1) % 256 << std::endl;
 }

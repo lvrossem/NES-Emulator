@@ -34,7 +34,7 @@ private:
     uint8_t cpu_memory[MEMORY_SIZE]; // The available memory
 
     uint16_t PC; // The program counter
-    uint16_t SP; // The stack pointer
+    uint8_t SP; // The stack pointer
     uint8_t A;   // The accumulator
     uint8_t X;   // The index register X
     uint8_t Y;   // The index register Y

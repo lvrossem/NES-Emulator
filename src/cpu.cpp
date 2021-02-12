@@ -382,7 +382,7 @@ void CPU::execute_4(uint8_t opcode) {
     switch (instruction) {
         case BCC: {
             // BCC instruction
-            if (get_status_bit(Carry)) {
+            if (!get_status_bit(Carry)) {
                 PC += next_prg_byte();
             }
 
@@ -391,26 +391,46 @@ void CPU::execute_4(uint8_t opcode) {
 
         case BCS: {
             // BCS instruction
+            if (get_status_bit(Carry)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case BEQ: {
             // BEQ instruction
+            if (get_status_bit(Zero)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case BMI: {
             // BMI instruction
+            if (get_status_bit(Negative)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case BNE: {
             // BNE instruction
+            if (!get_status_bit(Zero)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case BPL: {
             // BPL instruction
+            if (!get_status_bit(Negative)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
@@ -421,61 +441,94 @@ void CPU::execute_4(uint8_t opcode) {
 
         case BVC: {
             // BVC instruction
+            if (!get_status_bit(Overflow)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case BVS: {
             // BVS instruction
+            if (get_status_bit(Overflow)) {
+                PC += next_prg_byte();
+            }
+
             break;
         }
 
         case CLC: {
             // CLC instruction
+            set_status_bit(Carry, false);
+
             break;
         }
 
         case CLD: {
             // CLD instruction
+            set_status_bit(DecimalMode, false);
+
             break;
         }
 
         case CLI: {
             // CLI instruction
+            set_status_bit(InterruptDisable, false);
+
             break;
         }
 
         case CLV: {
             // CLV instruction
+            set_status_bit(Overflow, false);
+
             break;
         }
 
         case DEX: {
             // DEX instruction
+            X -= 1;
+            set_status_bit(Negative, get_bit_by_index(X, 0) == 1);
+            set_status_bit(Zero, X == 0);
+
             break;
         }
 
         case DEY: {
             // DEY instruction
+            Y -= 1;
+            set_status_bit(Negative, get_bit_by_index(Y, 0) == 1);
+            set_status_bit(Zero, Y == 0);
+
             break;
         }
 
         case INX: {
-            // BCS instruction
+            // INX instruction
+            X = (X + 1) % 256;
+            set_status_bit(Negative, get_bit_by_index(X, 0) == 1);
+            set_status_bit(Zero, X == 0);
+
             break;
         }
 
         case INY: {
-            // BCS instruction
+            // INY instruction
+            Y = (Y + 1) % 256;
+            set_status_bit(Negative, get_bit_by_index(Y, 0) == 1);
+            set_status_bit(Zero, Y == 0);
+
             break;
         }
 
         case NOP: {
-            // BCS instruction
+            // NOP instruction
+            // Do nothing
             break;
         }
 
         case PHA: {
-            // BCS instruction
+            // PHA instruction
             break;
         }
 
@@ -505,52 +558,80 @@ void CPU::execute_4(uint8_t opcode) {
         }
 
         case SEC: {
-            // BCS instruction
+            // SEC instruction
+            set_status_bit(Carry, true);
+        
             break;
         }
 
         case SED: {
-            // BCS instruction
+            // SED instruction
+            set_status_bit(DecimalMode, true);
+
             break;
         }
 
         case SEI: {
-            // BCS instruction
+            // SEI instruction
+            set_status_bit(InterruptDisable, true);
+
             break;
         }
 
         case TAX: {
-            // BCS instruction
+            // TAX instruction
+            X = A;
+            set_status_bit(Carry, X == 0);
+            set_status_bit(Negative, get_bit_by_index(X, 0));
+
             break;
         }
 
         case TAY: {
-            // BCS instruction
+            // TAY instruction
+            Y = A;
+            set_status_bit(Carry, Y == 0);
+            set_status_bit(Negative, get_bit_by_index(Y, 0));
+
             break;
         }
 
         case TSX: {
-            // BCS instruction
+            // TSX instruction
+            X = SP;
+            set_status_bit(Carry, X == 0);
+            set_status_bit(Negative, get_bit_by_index(X, 0));
+
             break;
         }
 
         case TXA: {
-            // BCS instruction
+            // TXA instruction
+            A = X;
+            set_status_bit(Carry, A == 0);
+            set_status_bit(Negative, get_bit_by_index(A, 0));
+
             break;
         }
 
         case TXS: {
-            // BCS instruction
+            // TXS instruction; no status bits are changed
+            SP = X;
+
             break;
         }
 
         case TYA: {
-            // BCS instruction
+            // TYA instruction
+            A = Y;
+            set_status_bit(Carry, A == 0);
+            set_status_bit(Negative, get_bit_by_index(A, 0));
+
             break;
         }
 
         case JSR: {
-            // BCS instruction
+            // JSR instruction
             break;
         }
 
