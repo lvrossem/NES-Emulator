@@ -62,8 +62,6 @@ private:
 
     void push(uint8_t byte);
     uint8_t pop();
-    uint8_t read_from_memory(uint16_t address);
-    void write_byte_to_memory(uint16_t address, uint8_t byte);
 
     void interrupt(InterruptType type);
 

@@ -7,6 +7,7 @@
 #define IO_REGISTERS_START 0x2000 // Address of the first IO-register
 #define STACK_SIZE 0x00FF; // Size of the stack
 
+#include <assert.h>
 #include <stdint.h>
 
 class CPUMemory {
@@ -18,6 +19,9 @@ public:
     CPUMemory();
     uint16_t get_top_of_stack() { return TOP_OF_STACK; }
     uint8_t& operator[](uint16_t index);
+
+    void write_byte(uint16_t address, uint8_t byte);
+    uint8_t read_byte(uint16_t address);
 };
 
 #endif

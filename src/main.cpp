@@ -33,4 +33,10 @@ int main(int argc, char **argv) {
     uint8_t a = 2;
     std::cout << (++a == 3) << std::endl;
     std::cout << (a == 3) << std::endl;
+
+    CPUMemory *mem = new CPUMemory();
+    uint8_t example = (*mem)[1];
+    example += 4;
+
+    std::cout << (int) (*mem)[1] << std::endl;
 }
