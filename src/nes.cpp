@@ -106,19 +106,19 @@ bool NES::load_rom(const char* rom_path) {
 
     if (rom_header.nr_prg_rom_banks == 1) {
         // With only 1 PRG-ROM bank, write to both banks in memory
-        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_to_memory(prg_rom_banks[0], UPPER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[0], UPPER_PRG_ROM_START, 0x4000);
     } else if (rom_header.nr_prg_rom_banks == 2) {
         // With 2 PRG-ROM banks, write one to each bank in memory
-        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_to_memory(prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
     }
 
     if (rom_header.mapper_number == 2) {
         // UNROM Switch is used; load first and last PRG-ROM bank into memory
         uint8_t last_bank_index = rom_header.nr_prg_rom_banks - 1;
-        cpu->write_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_to_memory(prg_rom_banks[last_bank_index], UPPER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        cpu->write_data_to_memory(prg_rom_banks[last_bank_index], UPPER_PRG_ROM_START, 0x4000);
     }
     
     return true;

@@ -29,4 +29,8 @@ int main(int argc, char **argv) {
     }
 
     infile.close();
+
+    uint8_t a = 2;
+    std::cout << (++a == 3) << std::endl;
+    std::cout << (a == 3) << std::endl;
 }

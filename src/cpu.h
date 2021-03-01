@@ -92,7 +92,7 @@ public:
     uint16_t merge_uint8_t(uint8_t upper, uint8_t lower); // Combine upper and lower into one uint16_t
 
     void initialize(); // Set all registers and entire memory to 0
-    void write_data_to_memory(uint8_t* data, uint16_t start, uint16_t size); // Write array of bytes to memory
+    void write_data_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
 
     void execute(); // Determine type of instruction and execute said instruction
 
