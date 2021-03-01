@@ -19,7 +19,7 @@ void CPU::initialize() {
     }
 }
 
-void CPU::write_to_memory(char* data, uint16_t start, uint16_t size) {
+void CPU::write_data_to_memory(uint8_t* data, uint16_t start, uint16_t size) {
     assert(MEMORY_SIZE - size >= start);
 
     for (int i = 0; i < size; i++) {
@@ -45,6 +45,68 @@ uint16_t CPU::merge_uint8_t(uint8_t upper, uint8_t lower) {
 
 uint8_t CPU::next_prg_byte() {
     return (*cpu_memory)[PC++];
+}
+
+void CPU::push(uint8_t byte) {
+    write_byte_to_memory(SP, byte);
+    SP--;
+}
+
+uint8_t CPU::pop() {
+    SP++;
+    return read_from_memory(SP);
+}
+
+uint8_t CPU::read_from_memory(uint16_t address) {
+    return (*cpu_memory)[address];
+}
+
+void CPU::write_byte_to_memory(uint16_t address, uint8_t byte) {
+    (*cpu_memory)[address] = byte;
+}
+
+void CPU::interrupt(InterruptType type) {
+    if (get_status_bit(InterruptDisable) && type == IRQ) {
+        return;
+    }
+
+    uint8_t lower_PC = static_cast<uint8_t>(PC & 0x00FF);
+    uint8_t upper_PC = static_cast<uint8_t>((PC & 0xFF00) >> 8);
+
+    push(lower_PC);
+    push(upper_PC);
+    push(P);
+
+    set_status_bit(InterruptDisable, true);
+
+    switch (type) {
+        case IRQ: {
+            // Maskable interrupt
+            PC = merge_uint8_t(read_from_memory(0xFFFF), read_from_memory(0xFFFE));
+
+            break;
+        }
+
+        case NMI: {
+            // Non-maskable interrupt
+            PC = merge_uint8_t(read_from_memory(0xFFFB), read_from_memory(0xFFFA));
+
+            break;
+        }
+
+        case RES: {
+            // Reset
+            PC = merge_uint8_t(read_from_memory(0xFFFD), read_from_memory(0xFFFC));
+
+            break;
+        }
+        
+        default: {
+            std::cout << "Invalid interrupt type" << std::endl;
+
+            break;
+        }
+    }
 }
 
 void CPU::execute() {
@@ -133,7 +195,7 @@ void CPU::execute_1A(uint8_t opcode) {
 
             uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
-            arg = (*cpu_memory)[total_arg + Y];
+            arg = read_from_memory(total_arg + Y);
             break;
         }
 
@@ -443,6 +505,8 @@ void CPU::execute_4(uint8_t opcode) {
 
         case BRK: {
             // BRK instruction
+            set_status_bit(Break, true);
+            interrupt(IRQ);
             break;
         }
 
@@ -536,41 +600,37 @@ void CPU::execute_4(uint8_t opcode) {
 
         case PHA: {
             // PHA instruction
-            (*cpu_memory)[SP] = A;
-            SP -= 1;
+            push(A);
 
             break;
         }
 
         case PHP: {
             // PHP instruction
-            (*cpu_memory)[SP] = P;
-            SP -= 1;
+            push(P);
 
             break;
         }
 
         case PLA: {
             // PLA instruction
-            A = (*cpu_memory)[SP];
-            SP += 1;
+            A = pop();
 
             break;
         }
 
         case PLP: {
             // PLP instruction
-            P = (*cpu_memory)[SP];
-            SP += 1;
+            P = pop();
 
             break;
         }
 
         case RTI: {
             // RTI instruction
-            P = (*cpu_memory)[SP];
-            PC = (*cpu_memory)[SP + 1];
-            SP += 2;
+            // TODO Fix issue with PC being 2 bytes long
+            P = pop();
+            PC = merge_uint8_t(pop(), pop());
 
             break;
         }
@@ -578,8 +638,7 @@ void CPU::execute_4(uint8_t opcode) {
         case RTS: {
             // RTS instruction
             // TODO Fix issue with PC being 2 bytes long
-            PC = (*cpu_memory)[SP];
-            SP += 2;
+            PC = merge_uint8_t(pop(), pop());
             PC += 1;
 
             break;
@@ -660,12 +719,12 @@ void CPU::execute_4(uint8_t opcode) {
 
         case JSR: {
             // JSR instruction
+            // UPPER BYTE ON STACK ABOVE LOWER PART!
             uint8_t lower_PC = static_cast<uint8_t>((PC + 2) & 0x00FF);
             uint8_t upper_PC = static_cast<uint8_t>(((PC + 2) & 0xFF00) >> 8);
 
-            (*cpu_memory)[SP] = upper_PC;
-            (*cpu_memory)[SP + 1] = lower_PC;
-            SP += 2;
+            push(lower_PC);
+            push(upper_PC);
 
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();

@@ -15,6 +15,7 @@
 #include "cpu_memory.h"
 
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
+enum InterruptType { NMI, IRQ, RES };
 enum Instruction {
     ADC = 0x61, AND = 0x21, CMP = 0xC1, EOR = 0x41,
     LDA = 0xA1, ORA = 0x01, SBC = 0xE1, STA = 0x81,
@@ -59,6 +60,13 @@ private:
     const std::set<Instruction> group_3A {BIT};
     const std::set<Instruction> group_3B {JMP};
 
+    void push(uint8_t byte);
+    uint8_t pop();
+    uint8_t read_from_memory(uint16_t address);
+    void write_byte_to_memory(uint16_t address, uint8_t byte);
+
+    void interrupt(InterruptType type);
+
     void execute_1A(uint8_t opcode); // Execute instruction of type 1A
     void execute_1B(uint8_t opcode); // Execute instruction of type 1B
     void execute_2A(uint8_t opcode); // Execute instruction of type 2A
@@ -84,7 +92,7 @@ public:
     uint16_t merge_uint8_t(uint8_t upper, uint8_t lower); // Combine upper and lower into one uint16_t
 
     void initialize(); // Set all registers and entire memory to 0
-    void write_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
+    void write_data_to_memory(uint8_t* data, uint16_t start, uint16_t size); // Write array of bytes to memory
 
     void execute(); // Determine type of instruction and execute said instruction
 
