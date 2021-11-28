@@ -4,6 +4,10 @@ CPU::CPU() {
     initialize();
 }
 
+CPU::~CPU() {
+    delete cpu_memory;
+}
+
 void CPU::initialize() {
     cpu_memory = new CPUMemory();
 
@@ -28,7 +32,7 @@ void CPU::write_data_to_memory(char* data, uint16_t start, uint16_t size) {
 }
 
 void CPU::set_status_bit(StatusBit bit, bool flag) {
-    P = flag ? P | (0b00000001 << bit) : P & (0b11111110 << bit);
+    P = flag ? P | (0b00000001 << bit) : P & ~(0b00000001 << bit);
 }
 
 bool CPU::get_status_bit(StatusBit bit) {
@@ -36,7 +40,7 @@ bool CPU::get_status_bit(StatusBit bit) {
 } 
 
 bool CPU::get_bit_by_index(uint8_t arg, uint8_t i) {
-    return (arg & (0x01 << (7 - i))) >> i;
+    return (arg & (0b00000001 << i)) >> i;
 }
 
 uint16_t CPU::merge_uint8_t(uint8_t upper, uint8_t lower) {

@@ -1,6 +1,8 @@
 #ifndef CPU_H
 #define CPU_H
 
+// DISCLAIMER: Bits are always indexed from right to left
+
 #define MEMORY_SIZE 0x10000 // 64 KiB
 #define LOWER_PRG_ROM_START 0x8000 // Start of lower PRG-ROM bank
 #define UPPER_PRG_ROM_START 0xC000 // Start of upper PRG-ROM bank
@@ -38,7 +40,7 @@ private:
     CPUMemory* cpu_memory; // The available memory
 
     uint16_t PC; // The program counter
-    uint8_t SP; // The stack pointer
+    uint8_t SP;  // The stack pointer
     uint8_t A;   // The accumulator
     uint8_t X;   // The index register X
     uint8_t Y;   // The index register Y
@@ -82,6 +84,7 @@ private:
 
 public:
     CPU();
+    ~CPU();
 
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
     bool get_status_bit(StatusBit bit); // Gets a statusbit from P
