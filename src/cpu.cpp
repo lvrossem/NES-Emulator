@@ -4,30 +4,22 @@ CPU::CPU() {
     initialize();
 }
 
-CPU::~CPU() {
-    delete cpu_memory;
-}
+CPU::~CPU() {}
 
 void CPU::initialize() {
-    cpu_memory = new CPUMemory();
-
     PC = 0;
-    SP = cpu_memory->get_top_of_stack();
+    SP = TOP_OF_CPU_STACK;
     A = 0;
     X = 0;
     Y = 0;
     P = 0;
-
-    for (int i = 0; i < MEMORY_SIZE; i++) {
-        cpu_memory->write_byte(i, 0);
-    }
 }
 
 void CPU::write_data_to_memory(char* data, uint16_t start, uint16_t size) {
     assert(MEMORY_SIZE - size >= start);
 
     for (int i = 0; i < size; i++) {
-        cpu_memory->write_byte(start + i, data[i]);
+        bus->write_to_cpu(start + i, data[i]);
     }
 }
 
@@ -48,17 +40,15 @@ uint16_t CPU::merge_uint8_t(uint8_t upper, uint8_t lower) {
 }
 
 uint8_t CPU::next_prg_byte() {
-    return cpu_memory->read_byte(PC++);
+    return bus->read_from_cpu(PC++);
 }
 
 void CPU::push(uint8_t byte) {
-    cpu_memory->write_byte(SP, byte);
-    SP--;
+    bus->write_to_cpu(SP--, byte);
 }
 
 uint8_t CPU::pop() {
-    SP++;
-    return cpu_memory->read_byte(SP);
+    return bus->read_from_cpu(++SP);
 }
 
 void CPU::interrupt(InterruptType type) {
@@ -78,21 +68,21 @@ void CPU::interrupt(InterruptType type) {
     switch (type) {
         case IRQ: {
             // Maskable interrupt
-            PC = merge_uint8_t(cpu_memory->read_byte(0xFFFF), cpu_memory->read_byte(0xFFFE));
+            PC = merge_uint8_t(bus->read_from_cpu(0xFFFF), bus->read_from_cpu(0xFFFE));
 
             break;
         }
 
         case NMI: {
             // Non-maskable interrupt
-            PC = merge_uint8_t(cpu_memory->read_byte(0xFFFB), cpu_memory->read_byte(0xFFFA));
+            PC = merge_uint8_t(bus->read_from_cpu(0xFFFB), bus->read_from_cpu(0xFFFA));
 
             break;
         }
 
         case RES: {
             // Reset
-            PC = merge_uint8_t(cpu_memory->read_byte(0xFFFD), cpu_memory->read_byte(0xFFFC));
+            PC = merge_uint8_t(bus->read_from_cpu(0xFFFD), bus->read_from_cpu(0xFFFC));
 
             break;
         }
@@ -152,7 +142,7 @@ void CPU::execute_1A(uint8_t opcode) {
 
         case 0b001: {
             // Zero page
-            arg = cpu_memory->read_byte(next_prg_byte());
+            arg = bus->read_from_cpu(next_prg_byte());
     
             break;
         }
@@ -164,14 +154,14 @@ void CPU::execute_1A(uint8_t opcode) {
 
             uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
-            arg = cpu_memory->read_byte(total_arg);
+            arg = bus->read_from_cpu(total_arg);
             
             break;
         }
         
         case 0b101: {
             // Zero page X
-            arg = cpu_memory->read_byte(next_prg_byte() + X);
+            arg = bus->read_from_cpu(next_prg_byte() + X);
             
             break;
         }
@@ -183,7 +173,7 @@ void CPU::execute_1A(uint8_t opcode) {
 
             uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
-            arg = cpu_memory->read_byte(total_arg + X);
+            arg = bus->read_from_cpu(total_arg + X);
             
             break;
         }
@@ -195,20 +185,20 @@ void CPU::execute_1A(uint8_t opcode) {
 
             uint16_t total_arg = merge_uint8_t(upper_arg, lower_arg);
 
-            arg = cpu_memory->read_byte(total_arg + Y);
+            arg = bus->read_from_cpu(total_arg + Y);
             break;
         }
 
         case 0b000: {
             // Indirect X
-            arg = cpu_memory->read_byte(next_prg_byte() + X);
+            arg = bus->read_from_cpu(next_prg_byte() + X);
     
             break;
         }
 
         case 0b100: {
             // Indirect Y (DIFFERENT FROM Indirect X!)
-            arg = cpu_memory->read_byte(cpu_memory->read_byte(next_prg_byte()) + Y);
+            arg = bus->read_from_cpu(bus->read_from_cpu(next_prg_byte()) + Y);
             
             break;
         }
@@ -362,7 +352,7 @@ void CPU::execute_2B(uint8_t opcode) {
 
         case 0b01: {
             // Zero page
-            arg = cpu_memory->read_byte(next_prg_byte());
+            arg = bus->read_from_cpu(next_prg_byte());
     
             break;
         }
@@ -372,7 +362,7 @@ void CPU::execute_2B(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            arg = cpu_memory->read_byte(merge_uint8_t(upper_arg, lower_arg));
+            arg = bus->read_from_cpu(merge_uint8_t(upper_arg, lower_arg));
 
             break;
         }
@@ -392,7 +382,7 @@ void CPU::execute_3A(uint8_t opcode) {
     switch ((opcode & 0x08) >> 3) {
         case 0b0: {
             // Zero page
-            arg = cpu_memory->read_byte(next_prg_byte());
+            arg = bus->read_from_cpu(next_prg_byte());
 
             break;
         }
@@ -402,7 +392,7 @@ void CPU::execute_3A(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
             
-            arg = cpu_memory->read_byte(merge_uint8_t(upper_arg, lower_arg));
+            arg = bus->read_from_cpu(merge_uint8_t(upper_arg, lower_arg));
 
             break;
         }
@@ -435,7 +425,7 @@ void CPU::execute_3B(uint8_t opcode) {
             uint8_t lower_arg = next_prg_byte();
             uint8_t upper_arg = next_prg_byte();
 
-            arg = cpu_memory->read_byte(merge_uint8_t(upper_arg, lower_arg));
+            arg = bus->read_from_cpu(merge_uint8_t(upper_arg, lower_arg));
 
             break;
         }
@@ -825,7 +815,7 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
 
         case STA: {
             // STA instruction
-            cpu_memory->write_byte(arg, A);
+            bus->write_to_cpu(arg, A);
 
             break;
         }
@@ -846,11 +836,11 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 set_status_bit(Zero, A == 0);
                 set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
             } else {
-                uint8_t byte = cpu_memory->read_byte(address);
+                uint8_t byte = bus->read_from_cpu(address);
                 set_status_bit(Carry, get_bit_by_index(byte, 0) == 1);
 
                 byte <<= 1;
-                cpu_memory->write_byte(address, byte);
+                bus->write_to_cpu(address, byte);
 
                 set_status_bit(Zero, byte == 0);
                 set_status_bit(Negative, get_bit_by_index(byte, 0) == 1);
@@ -861,7 +851,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
 
         case LDX: {
             // LDX instruction
-            X = immediate ? arg : cpu_memory->read_byte(address);
+            X = immediate ? arg : bus->read_from_cpu(address);
             set_status_bit(Zero, X == 0);
             set_status_bit(Negative, get_bit_by_index(X, 0) == 1);
 
@@ -870,7 +860,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
 
         case LDY: {
             // LDY instruction
-            Y = immediate ? arg : cpu_memory->read_byte(address);
+            Y = immediate ? arg : bus->read_from_cpu(address);
             set_status_bit(Zero, Y == 0);
             set_status_bit(Negative, get_bit_by_index(Y, 0) == 1);
 
@@ -886,11 +876,11 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 A >>= 1;
                 set_status_bit(Zero, A == 0);
             } else {
-                uint8_t byte = cpu_memory->read_byte(address);
+                uint8_t byte = bus->read_from_cpu(address);
                 set_status_bit(Carry, get_bit_by_index(byte, 7));
 
                 byte >>= 1;
-                cpu_memory->write_byte(address, byte);
+                bus->write_to_cpu(address, byte);
 
                 set_status_bit(Zero, byte == 0);
             }
@@ -909,12 +899,12 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 set_status_bit(Zero, A == 0);
                 set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
             } else {
-                uint8_t byte = cpu_memory->read_byte(address);
+                uint8_t byte = bus->read_from_cpu(address);
                 uint8_t new_carry = get_bit_by_index(byte, 7);
 
                 byte = (byte >> 1) + get_status_bit(Carry) * 0x80;
 
-                cpu_memory->write_byte(address, byte);
+                bus->write_to_cpu(address, byte);
 
                 set_status_bit(Carry, new_carry);
                 set_status_bit(Zero, byte == 0);
@@ -935,12 +925,12 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 set_status_bit(Zero, A == 0);
                 set_status_bit(Negative, get_bit_by_index(A, 0) == 1);
             } else {
-                uint8_t byte = cpu_memory->read_byte(address);
+                uint8_t byte = bus->read_from_cpu(address);
                 uint8_t new_carry = get_bit_by_index(byte, 0);
 
                 byte = (byte << 1) + get_status_bit(Carry);
 
-                cpu_memory->write_byte(address, byte);
+                bus->write_to_cpu(address, byte);
 
                 set_status_bit(Carry, new_carry);
                 set_status_bit(Zero, byte == 0);
@@ -960,8 +950,8 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
     switch (instruction) {
         case DEC: {
             // DEC instruction
-            uint8_t value = cpu_memory->read_byte(address);
-            cpu_memory->write_byte(address, --value);
+            uint8_t value = bus->read_from_cpu(address);
+            bus->write_to_cpu(address, --value);
             
             set_status_bit(Zero, value == 0);
             set_status_bit(Negative, get_bit_by_index(value, 0) == 1);
@@ -971,8 +961,8 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
 
         case INC: {
             // INC instruction
-            uint8_t value = cpu_memory->read_byte(address);
-            cpu_memory->write_byte(address, ++value);
+            uint8_t value = bus->read_from_cpu(address);
+            bus->write_to_cpu(address, ++value);
             
             set_status_bit(Zero, value == 0);
             set_status_bit(Negative, get_bit_by_index(value, 0) == 1);
@@ -982,14 +972,14 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
 
         case STX: {
             // STX instruction
-            cpu_memory->write_byte(address, X);
+            bus->write_to_cpu(address, X);
 
             break;
         }
 
         case STY: {
             // STY instruction
-            cpu_memory->write_byte(address, Y);
+            bus->write_to_cpu(address, Y);
 
             break;
         }

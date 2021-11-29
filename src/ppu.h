@@ -2,6 +2,7 @@
 #define PPU_H
 
 #include <cstring>
+#include <cstdint>
 
 #define FRAME_WIDTH 0x20
 #define FRAME_HEIGHT 0x1E
@@ -9,15 +10,10 @@
 #define NAME_TABLE_BOTTOM 0x2000
 #define PATTERN_TABLE_BOTTOM 0x0000
 
-#define VRAM_SIZE 0x4000 // 16 KiB
-#define SPR_RAM_SIZE 0x100 // 256 bytes
-
 #define CONTROL_REGISTER_1 0x2000
 #define CONTROL_REGISTER_2 0x2001
 
-#include <stdint.h>
-
-#include "cpu.h"
+#include "bus.h"
 
 /*
 uint32_t colour_palette[64] = {
@@ -40,10 +36,12 @@ uint32_t colour_palette[64] = {
 };
 */
 
-class CPU;
+class Bus;
 // Picture processing unit
 class PPU {
 private:
+    Bus* bus;
+
     constexpr static uint32_t colour_palette[64] = {
         0x757575, 0x271B8F, 0x0000AB, 0x47009F,
         0x8F0077, 0xAB0013, 0xA70000, 0x7F0B00,
@@ -62,19 +60,13 @@ private:
         0xFFE7A3, 0xE3FFA3, 0xABF3BF, 0xB3FFCF,
         0x9FFFF3, 0x000000, 0x000000, 0x000000
     };
-    // Only the lowest 16 KiB is really used, but we have 48 KiB more for mirrors
-    uint8_t ppu_memory[VRAM_SIZE * 4];
-
-    // Memory to store sprite attributes
-    uint8_t spr_ram[SPR_RAM_SIZE];
 
     // Display matrix
     uint32_t display[FRAME_HEIGHT * FRAME_WIDTH * 64];
 
-    CPU* cpu;
-
 public:
-    PPU(CPU*);
+    PPU();
+    void set_bus(Bus* bus_ptr) { this->bus = bus_ptr; }
     void draw();
     uint32_t* get_display() { return display; }
 };

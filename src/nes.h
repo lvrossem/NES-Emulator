@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "cpu.h"
+#include "bus.h"
 
 typedef struct iNES_header {
     // Indicates a valid iNES-header
@@ -40,7 +40,8 @@ typedef struct iNES_header {
 class NES {
 private:
     CPU* cpu;
-
+    PPU* ppu;
+    Bus* bus;
 public:
     NES();
     ~NES();

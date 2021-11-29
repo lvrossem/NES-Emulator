@@ -14,8 +14,7 @@
 #include <set>
 #include <iostream>
 
-#include "cpu_memory.h"
-#include "ppu.h"
+#include "bus.h"
 
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
 enum InterruptType { NMI, IRQ, RES };
@@ -36,9 +35,10 @@ enum Instruction {
     TXA = 0x8A, TXS = 0x9A, TYA = 0x98, JSR = 0x20
 };
 
+class Bus;
 class CPU {
 private:
-    CPUMemory* cpu_memory; // The available memory
+    Bus* bus;
 
     uint16_t PC; // The program counter
     uint8_t SP;  // The stack pointer
@@ -86,6 +86,8 @@ private:
 public:
     CPU();
     ~CPU();
+
+    void set_bus(Bus* bus_ptr) { this->bus = bus_ptr; }
 
     void set_status_bit(StatusBit bit, bool flag); // Sets a statusbit with the value of flag
     bool get_status_bit(StatusBit bit); // Gets a statusbit from P

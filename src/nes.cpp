@@ -1,7 +1,13 @@
 #include "nes.h"
 
 NES::NES() {
+    std::cout << "INIT..." << std::endl;
     cpu = new CPU();
+    ppu = new PPU();
+    bus = new Bus();
+
+    cpu->set_bus(bus);
+    ppu->set_bus(bus);
 }
 
 NES::~NES() {
