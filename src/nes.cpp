@@ -9,7 +9,7 @@ NES::NES() {
     cpu->set_bus(bus);
     ppu->set_bus(bus);
 
-    Controller* controller = new Controller();
+    controller = new Controller();
 
     bus->attach_controller(controller);
 }
