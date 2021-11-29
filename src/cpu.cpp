@@ -8,7 +8,7 @@ CPU::~CPU() {}
 
 void CPU::initialize() {
     PC = 0;
-    SP = TOP_OF_CPU_STACK;
+    SP = CPU_STACK_SIZE;
     A = 0;
     X = 0;
     Y = 0;
@@ -44,11 +44,15 @@ uint8_t CPU::next_prg_byte() {
 }
 
 void CPU::push(uint8_t byte) {
-    bus->write_to_cpu(SP--, byte);
+    bus->write_to_cpu(CPU_STACK_BOTTOM + SP, byte);
+
+    // We do this because there is no real underflow or overflow detection; the SP can wrap around
+    SP = (SP - 1) % CPU_STACK_SIZE;
 }
 
 uint8_t CPU::pop() {
-    return bus->read_from_cpu(++SP);
+    SP = (SP + 1) % CPU_STACK_SIZE;
+    return bus->read_from_cpu(SP);
 }
 
 void CPU::interrupt(InterruptType type) {
