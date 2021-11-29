@@ -12,8 +12,6 @@ NES::NES() {
 
 NES::~NES() {
     delete cpu;
-    delete ppu;
-    delete bus;
 }
 
 iNES_header NES::parse_header(std::ifstream& input) {
