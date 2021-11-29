@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include "cpu_memory.h"
+#include "ppu.h"
 
 enum StatusBit { Negative = 0, Overflow, NotUsed, Break, DecimalMode, InterruptDisable, Zero, Carry };
 enum InterruptType { NMI, IRQ, RES };
@@ -95,7 +96,7 @@ public:
     void initialize(); // Set all registers and entire memory to 0
     void write_data_to_memory(char* data, uint16_t start, uint16_t size); // Write array of bytes to memory
 
-    void execute(); // Determine type of instruction and execute said instruction
+    void execute_next_instruction(); // Determine type of instruction and execute said instruction
 
     uint8_t next_prg_byte(); // Read the next byte from the program code
 };

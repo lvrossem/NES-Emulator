@@ -123,3 +123,7 @@ bool NES::load_rom(const char* rom_path) {
     
     return true;
 }
+
+void NES::execute_next_instruction() {
+    cpu->execute_next_instruction();
+}

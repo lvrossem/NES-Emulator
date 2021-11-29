@@ -4,7 +4,8 @@ PPU::PPU(CPU* cpu_ptr) {
     cpu = cpu_ptr;
 }
 
-uint32_t** PPU::get_frame() {
+void PPU::draw() {
+    uint32_t display[FRAME_HEIGHT * 8][FRAME_WIDTH * 8];
     for (int y = 0; y < FRAME_HEIGHT; y++) {
         for (int x = 0; x < FRAME_WIDTH; x++) {
             int name_table_index = y * FRAME_WIDTH + x;
@@ -25,7 +26,7 @@ uint32_t** PPU::get_frame() {
                 display[y*8 + i][x*8] = result[i];
             }
 
-            return display;
+            
             // Add color palette shenanagans later
         }
     }

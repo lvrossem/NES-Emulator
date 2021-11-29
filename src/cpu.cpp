@@ -105,7 +105,7 @@ void CPU::interrupt(InterruptType type) {
     }
 }
 
-void CPU::execute() {
+void CPU::execute_next_instruction() {
     uint8_t opcode = next_prg_byte();
 
     if (group_1A.count(static_cast<Instruction>(opcode & 0xE3)) == 1) {

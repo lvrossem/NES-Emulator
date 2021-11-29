@@ -47,6 +47,7 @@ public:
 
     bool load_rom(const char* rom_path); // Loads the ROM into memory
     iNES_header parse_header(std::ifstream& input); // Parse the iNES-header
+    void execute_next_instruction();
 };
 
 #endif
