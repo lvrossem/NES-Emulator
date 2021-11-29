@@ -1,8 +1,17 @@
 #ifndef PPU_H
 #define PPU_H
 
+#include <cstring>
+
+#define FRAME_WIDTH 0x20
+#define FRAME_HEIGHT 0x1E
+
+#define NAME_TABLE_BOTTOM 0x2000
+#define PATTERN_TABLE_BOTTOM 0x0000
+
 #define VRAM_SIZE 0x4000 // 16 KiB
 #define SPR_RAM_SIZE 0x100 // 256 bytes
+
 #define CONTROL_REGISTER_1 0x2000
 #define CONTROL_REGISTER_2 0x2001
 
@@ -59,10 +68,14 @@ private:
     // Memory to store sprite attributes
     uint8_t spr_ram[SPR_RAM_SIZE];
 
+    // Display matrix
+    uint32_t display[FRAME_HEIGHT * 8][FRAME_WIDTH * 8];
+
     CPU* cpu;
 
 public:
     PPU(CPU* cpu_ptr);
+    uint32_t** get_frame();
 };
 
 #endif
