@@ -37,6 +37,8 @@ public:
     uint8_t read_from_ppu(uint16_t address);
     void write_to_ppu(uint16_t address, uint8_t value);
     
+    //void initialize_controllers(int amount);
+    void attach_controller(Controller* controller);
     void change_button(uint8_t button_index, bool pressed);
 };
 

@@ -3,7 +3,7 @@ project(NES_Emulator)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
-set(SOURCE_FILES src/main.cpp src/nes.h src/nes.cpp src/cpu.h src/cpu.cpp src/bus.h src/bus.cpp src/ppu.h src/ppu.cpp)
+set(SOURCE_FILES src/main.cpp src/nes.h src/nes.cpp src/cpu.h src/cpu.cpp src/controller.h src/controller.cpp src/bus.h src/bus.cpp src/ppu.h src/ppu.cpp)
 add_executable(NES ${SOURCE_FILES})
 
 INCLUDE(FindPkgConfig)

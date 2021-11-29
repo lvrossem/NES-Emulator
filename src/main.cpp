@@ -6,6 +6,18 @@
 #include "SDL2/SDL.h"
 #include "nes.h"
 
+// Controller keymap
+unsigned int keymap[NR_OF_BUTTONS] = {
+    SDLK_a,
+    SDLK_b,
+    SDLK_RSHIFT,
+    SDLK_RETURN,
+    SDLK_UP,
+    SDLK_DOWN,
+    SDLK_LEFT,
+    SDLK_RIGHT,
+};
+
 int main(int argc, char **argv) {
     /*
     char nes[4] = "NES";
@@ -26,7 +38,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    window = SDL_CreateWindow("Chip-8", 
+    window = SDL_CreateWindow("Nemulator", 
                                SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED,
                                FRAME_WIDTH * 8,
@@ -52,5 +64,46 @@ int main(int argc, char **argv) {
     // Attempt to load ROM
     if (nes.load_rom(argv[1])) {
         return 2;
+    }
+
+    while (true) {
+        //nes.execute_next_instruction();
+
+        // Process SDL events
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                exit(0);
+            }
+
+            // Process keydown events
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    exit(0);
+                }
+
+                if (e.key.keysym.sym == SDLK_F1) {
+                    // Reset ROM
+                    goto load;     
+                }
+
+                for (int i = 0; i < NR_OF_BUTTONS; ++i) {
+                    if (e.key.keysym.sym == keymap[i]) {
+                        std::cout << "DOWNPRESS DETECTED" << std::endl;
+                        nes.change_button(i, true);
+
+                        std::cout << e.key.keysym.sym << std::endl;
+                    }
+                }
+            }
+            // Process keyup events
+            if (e.type == SDL_KEYUP) {
+                for (int i = 0; i < NR_OF_BUTTONS; ++i) {
+                    if (e.key.keysym.sym == keymap[i]) {
+                        nes.change_button(i, false);
+                    }
+                }
+            }
+        }
     }
 }

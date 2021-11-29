@@ -42,6 +42,7 @@ private:
     CPU* cpu;
     PPU* ppu;
     Bus* bus;
+    Controller* controller;
 public:
     NES();
     ~NES();
@@ -49,6 +50,7 @@ public:
     bool load_rom(const char* rom_path); // Loads the ROM into memory
     iNES_header parse_header(std::ifstream& input); // Parse the iNES-header
     void execute_next_instruction();
+    void change_button(uint8_t button_index, bool pressed);
 };
 
 #endif

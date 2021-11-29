@@ -8,10 +8,17 @@ NES::NES() {
 
     cpu->set_bus(bus);
     ppu->set_bus(bus);
+
+    Controller* controller = new Controller();
+
+    bus->attach_controller(controller);
 }
 
 NES::~NES() {
     delete cpu;
+    delete ppu;
+    delete bus;
+    delete controller;
 }
 
 iNES_header NES::parse_header(std::ifstream& input) {
@@ -132,4 +139,9 @@ bool NES::load_rom(const char* rom_path) {
 
 void NES::execute_next_instruction() {
     cpu->execute_next_instruction();
+}
+
+void NES::change_button(uint8_t button_index, bool pressed) {
+    std::cout << "HERE1" << std::endl;
+    bus->change_button(button_index, pressed);
 }
