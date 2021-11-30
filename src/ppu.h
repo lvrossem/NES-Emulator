@@ -7,8 +7,12 @@
 #define FRAME_WIDTH 0x20
 #define FRAME_HEIGHT 0x1E
 
+#define ATTRIBUTE_TABLE_BOTTOM 0x23C0
 #define NAME_TABLE_BOTTOM 0x2000
 #define PATTERN_TABLE_BOTTOM 0x0000
+
+#define IMAGE_PALETTE_BOTTOM 0x3F00
+#define SPRITE_PALETTE_BOTTOM 0x3F10
 
 #define CONTROL_REGISTER_1 0x2000
 #define CONTROL_REGISTER_2 0x2001
@@ -62,13 +66,23 @@ private:
     };
 
     // Display matrix
-    uint32_t display[FRAME_HEIGHT * FRAME_WIDTH * 64];
+    uint32_t** display;
 
+    // Fill a block tile with the proper color values
+    void fill_tile(uint8_t tile_x, uint8_t tile_y, uint8_t palette_index);
+
+    // Fill a block quadrant with the proper color values
+    void fill_quadrant(uint8_t upper_left_tile_x, uint8_t upper_left_tile_y, uint8_t palette_index);
+
+    // Fill a block with the proper color values
+    void fill_block(uint8_t block_nr);
 public:
     PPU();
+    ~PPU();
+
     void set_bus(Bus* bus_ptr) { this->bus = bus_ptr; }
     void draw();
-    uint32_t* get_display() { return display; }
+    uint32_t** get_display() { return display; } 
 };
 
 #endif
