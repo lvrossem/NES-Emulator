@@ -40,10 +40,30 @@ void Bus::write_to_cpu(uint16_t address, uint8_t value) {
 }
 
 uint8_t Bus::read_from_ppu(uint16_t address) {
+    if (address < 0x3000  && address >= 0x2000) {
+        if (cartridge->mirror_type) {
+            // Vertical mirroring
+            address &= 0x7FF;
+        } else {
+            // Horizontal mirroring
+            address &= 0xBFF;
+        }
+    }
+    
     return ppu_memory[address];
 }
 
 void Bus::write_to_ppu(uint16_t address, uint8_t value) {
+    if (address < 0x3000  && address >= 0x2000) {
+        if (cartridge->mirror_type) {
+            // Vertical mirroring
+            address &= 0x7FF;
+        } else {
+            // Horizontal mirroring
+            address &= 0xBFF;
+        }
+    }
+
     ppu_memory[address] = value;
 }
 
