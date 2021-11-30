@@ -15,6 +15,10 @@ void Bus::reset() {
     controllers[1] = nullptr;
 }
 
+void Bus::attach_cartridge(Cartridge* cartridge_ptr) {
+    cartridge = cartridge_ptr;
+}
+
 uint8_t Bus::read_from_cpu(uint16_t address) {
     switch (address) {
         case 0x4016: {

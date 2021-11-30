@@ -12,11 +12,15 @@
 #include "controller.h"
 #include "cpu.h"
 #include "ppu.h"
+#include "nes.h"
 
 class CPU;
 class PPU;
+class Cartridge;
 class Bus {
 private:
+    Cartridge* cartridge;
+
     uint8_t cpu_memory[CPU_MEMORY_SIZE];
     uint8_t ppu_memory[PPU_MEMORY_SIZE * 4];
     uint8_t spr_ram[SPR_RAM_SIZE];
@@ -30,6 +34,8 @@ public:
     ~Bus();
 
     void reset();
+
+    void attach_cartridge(Cartridge* cartridge_ptr);
 
     uint8_t read_from_cpu(uint16_t address);
     void write_to_cpu(uint16_t address, uint8_t value);

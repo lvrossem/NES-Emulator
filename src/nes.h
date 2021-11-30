@@ -8,7 +8,7 @@
 
 #include "bus.h"
 
-typedef struct iNES_header {
+typedef struct Cartridge {
     // Indicates a valid iNES-header
     bool is_valid_header;
 
@@ -35,20 +35,23 @@ typedef struct iNES_header {
 
     // Compose the mapper number from the lowest 4 bits of each control byte
     uint8_t mapper_number;
-} iNES_header;
+} Cartridge;
 
+class CPU;
+class PPU;
 class NES {
 private:
     CPU* cpu;
     PPU* ppu;
     Bus* bus;
     Controller* controller;
+    Cartridge* cartridge;
 public:
     NES();
     ~NES();
 
     bool load_rom(const char* rom_path); // Loads the ROM into memory
-    iNES_header parse_header(std::ifstream& input); // Parse the iNES-header
+    void parse_header(std::ifstream& input); // Parse the iNES-header
     void execute_next_instruction();
     void change_button(uint8_t button_index, bool pressed);
 };
