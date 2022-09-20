@@ -7,7 +7,7 @@ CPU::CPU() {
 CPU::~CPU() {}
 
 void CPU::initialize() {
-    PC = 0;
+    PC = LOWER_PRG_ROM_START;
     SP = CPU_STACK_SIZE;
     A = 0;
     X = 0;

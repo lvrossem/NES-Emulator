@@ -11,12 +11,11 @@
 
 #include "controller.h"
 #include "cpu.h"
+#include "cartridge.h"
 #include "ppu.h"
-#include "nes.h"
 
 class CPU;
 class PPU;
-class Cartridge;
 class Bus {
 private:
     uint8_t cpu_memory[CPU_MEMORY_SIZE];

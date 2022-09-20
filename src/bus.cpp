@@ -58,7 +58,7 @@ void Bus::execute_next_instruction() {
 
 uint8_t Bus::read_from_ppu(uint16_t address) {
     if (address < 0x3000  && address >= 0x2000) {
-        if (cartridge->mirror_type) {
+        if (cartridge->get_mirror_type()) {
             // Vertical mirroring
             address &= 0x7FF;
         } else {
@@ -72,7 +72,7 @@ uint8_t Bus::read_from_ppu(uint16_t address) {
 
 void Bus::write_to_ppu(uint16_t address, uint8_t value) {
     if (address < 0x3000  && address >= 0x2000) {
-        if (cartridge->mirror_type) {
+        if (cartridge->get_mirror_type()) {
             // Vertical mirroring
             address &= 0x7FF;
         } else {
