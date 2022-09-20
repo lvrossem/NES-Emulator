@@ -19,7 +19,7 @@ void CPU::write_data_to_memory(uint8_t* data, uint16_t start, uint16_t size) {
     assert(MEMORY_SIZE - size >= start);
 
     for (int i = 0; i < size; i++) {
-        bus->write_to_cpu(start + i, data[i]);
+        bus->write_to_memory(start + i, data[i]);
     }
 }
 
@@ -44,7 +44,7 @@ uint8_t CPU::next_prg_byte() {
 }
 
 void CPU::push(uint8_t byte) {
-    bus->write_to_cpu(CPU_STACK_BOTTOM + SP, byte);
+    bus->write_to_memory(CPU_STACK_BOTTOM + SP, byte);
 
     // We do this because there is no real underflow or overflow detection; the SP can wrap around
     SP = (SP - 1) % CPU_STACK_SIZE;
@@ -372,7 +372,7 @@ void CPU::execute_2B(uint8_t opcode) {
         }
 
         default: {
-            std::cout << "Unknown 2B opcode" << std::endl;
+            std::cout << "Unknown 2B opcode " << opcode << std::endl;
         }
     }
 
@@ -402,7 +402,7 @@ void CPU::execute_3A(uint8_t opcode) {
         }
 
         default: {
-            std::cout << "Unknown 3A opcode" << std::endl;
+            std::cout << "Unknown 3A opcode " << opcode << std::endl;
         }
     }
 
@@ -435,7 +435,7 @@ void CPU::execute_3B(uint8_t opcode) {
         }
 
         default: {
-            std::cout << "Unknown 3B opcode" << std::endl;
+            std::cout << "Unknown 3B opcode " << opcode << std::endl;
         }
     }
 
@@ -732,7 +732,7 @@ void CPU::execute_4(uint8_t opcode) {
         }
 
         default: {
-            std::cout << "Unknown 4 opcode" << std::endl;
+            std::cout << "Unknown 4 opcode " << instruction << std::endl;
         }
     }
 }
@@ -819,13 +819,13 @@ void CPU::handle_registers_1A(Instruction instruction, uint8_t arg) {
 
         case STA: {
             // STA instruction
-            bus->write_to_cpu(arg, A);
+            bus->write_to_memory(arg, A);
 
             break;
         }
 
         default: {
-            std::cout << "Unknown 1A instruction" << std::endl;
+            std::cout << "Unknown 1A instruction " << instruction << std::endl;
         }
     }
 }
@@ -844,7 +844,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 set_status_bit(Carry, get_bit_by_index(byte, 0) == 1);
 
                 byte <<= 1;
-                bus->write_to_cpu(address, byte);
+                bus->write_to_memory(address, byte);
 
                 set_status_bit(Zero, byte == 0);
                 set_status_bit(Negative, get_bit_by_index(byte, 0) == 1);
@@ -884,7 +884,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
                 set_status_bit(Carry, get_bit_by_index(byte, 7));
 
                 byte >>= 1;
-                bus->write_to_cpu(address, byte);
+                bus->write_to_memory(address, byte);
 
                 set_status_bit(Zero, byte == 0);
             }
@@ -908,7 +908,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
 
                 byte = (byte >> 1) + get_status_bit(Carry) * 0x80;
 
-                bus->write_to_cpu(address, byte);
+                bus->write_to_memory(address, byte);
 
                 set_status_bit(Carry, new_carry);
                 set_status_bit(Zero, byte == 0);
@@ -934,7 +934,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
 
                 byte = (byte << 1) + get_status_bit(Carry);
 
-                bus->write_to_cpu(address, byte);
+                bus->write_to_memory(address, byte);
 
                 set_status_bit(Carry, new_carry);
                 set_status_bit(Zero, byte == 0);
@@ -945,7 +945,7 @@ void CPU::handle_registers_1B(Instruction instruction, uint8_t arg, uint16_t add
         }
 
         default: {
-            std::cout << "Unknown 1B instruction" << std::endl;
+            std::cout << "Unknown 1B instruction " << instruction << std::endl;
         }
     }
 }
@@ -955,7 +955,7 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
         case DEC: {
             // DEC instruction
             uint8_t value = bus->read_from_cpu(address);
-            bus->write_to_cpu(address, --value);
+            bus->write_to_memory(address, --value);
             
             set_status_bit(Zero, value == 0);
             set_status_bit(Negative, get_bit_by_index(value, 0) == 1);
@@ -966,7 +966,7 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
         case INC: {
             // INC instruction
             uint8_t value = bus->read_from_cpu(address);
-            bus->write_to_cpu(address, ++value);
+            bus->write_to_memory(address, ++value);
             
             set_status_bit(Zero, value == 0);
             set_status_bit(Negative, get_bit_by_index(value, 0) == 1);
@@ -976,20 +976,20 @@ void CPU::handle_registers_2A(Instruction instruction, uint16_t address) {
 
         case STX: {
             // STX instruction
-            bus->write_to_cpu(address, X);
+            bus->write_to_memory(address, X);
 
             break;
         }
 
         case STY: {
             // STY instruction
-            bus->write_to_cpu(address, Y);
+            bus->write_to_memory(address, Y);
 
             break;
         }
 
         default: {
-            std::cout << "Unknown 2A instruction" << std::endl;
+            std::cout << "Unknown 2A instruction " << instruction << std::endl;
         }
     }
 }
@@ -1015,7 +1015,7 @@ void CPU::handle_registers_2B(Instruction instruction, uint8_t arg) {
         }
 
         default: {
-            std::cout << "Unknown 2B instruction" << std::endl;
+            std::cout << "Unknown 2B instruction " << instruction << std::endl;
         }
     }
 }
@@ -1033,7 +1033,7 @@ void CPU::handle_registers_3A(Instruction instruction, uint8_t arg) {
         }
 
         default: {
-            std::cout << "Unknown 3A instruction" << std::endl;
+            std::cout << "Unknown 3A instruction " << instruction << std::endl;
         }
     }
 }
@@ -1047,7 +1047,7 @@ void CPU::handle_registers_3B(Instruction instruction, uint8_t arg) {
         }
 
         default: {
-            std::cout << "Unknown 3B instruction" << std::endl;
+            std::cout << "Unknown 3B instruction " << instruction << std::endl;
         }
     }
 }

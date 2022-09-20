@@ -37,12 +37,9 @@ typedef struct Cartridge {
     uint8_t mapper_number;
 } Cartridge;
 
-class CPU;
-class PPU;
+
 class NES {
 private:
-    CPU* cpu;
-    PPU* ppu;
     Bus* bus;
     Controller* controller;
     Cartridge* cartridge;

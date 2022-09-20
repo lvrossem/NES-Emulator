@@ -19,14 +19,12 @@ class PPU;
 class Cartridge;
 class Bus {
 private:
-    Cartridge* cartridge;
-
     uint8_t cpu_memory[CPU_MEMORY_SIZE];
     uint8_t ppu_memory[PPU_MEMORY_SIZE * 4];
     uint8_t spr_ram[SPR_RAM_SIZE];
 
     Controller* controllers[2];
-
+    Cartridge* cartridge;
     CPU* cpu;
     PPU* ppu;
 public:
@@ -38,7 +36,9 @@ public:
     void attach_cartridge(Cartridge* cartridge_ptr);
 
     uint8_t read_from_cpu(uint16_t address);
-    void write_to_cpu(uint16_t address, uint8_t value);
+    void write_to_memory(uint16_t address, uint8_t value);
+    void write_array_to_memory(uint8_t* data, uint16_t start, uint16_t size);
+    void execute_next_instruction();
 
     uint8_t read_from_ppu(uint16_t address);
     void write_to_ppu(uint16_t address, uint8_t value);

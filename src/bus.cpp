@@ -4,9 +4,18 @@ Bus::Bus() {
     reset();
 }
 
-Bus::~Bus() {}
+Bus::~Bus() {
+    delete cpu;
+    delete ppu;
+}
 
 void Bus::reset() {
+    cpu = new CPU();
+    cpu->set_bus(this);
+
+    ppu = new PPU();
+    ppu->set_bus(this);
+
     memset(cpu_memory, 0, CPU_MEMORY_SIZE);
     memset(ppu_memory, 0, PPU_MEMORY_SIZE * 4);
     memset(spr_ram, 0, SPR_RAM_SIZE);
@@ -35,8 +44,16 @@ uint8_t Bus::read_from_cpu(uint16_t address) {
     }
 }
 
-void Bus::write_to_cpu(uint16_t address, uint8_t value) {
+void Bus::write_to_memory(uint16_t address, uint8_t value) {
     cpu_memory[address] = value;
+}
+
+void Bus::write_array_to_memory(uint8_t* data, uint16_t start, uint16_t size) {
+    cpu->write_data_to_memory(data, start, size);
+}
+
+void Bus::execute_next_instruction() {
+    cpu->execute_next_instruction();
 }
 
 uint8_t Bus::read_from_ppu(uint16_t address) {

@@ -19,6 +19,8 @@ unsigned int keymap[NR_OF_BUTTONS] = {
 };
 
 int main(int argc, char **argv) {
+    uint8_t a = 160;
+    std::cout << ((uint16_t) a << 4) << std::endl;
     /*
     char nes[4] = "NES";
     char bits[4];
@@ -62,14 +64,16 @@ int main(int argc, char **argv) {
     NES *nes = new NES();
     uint32_t pixels[2048];
     
+    std::cout << "Loading ROM..." << std::endl;
+
     load:
     // Attempt to load ROM
-    if (nes->load_rom(argv[1])) {
+    if (!nes->load_rom(argv[1])) {
         return 2;
     }
-    
+    std::cout << "HERE" << std::endl;
     while (true) {
-        //nes.execute_next_instruction();
+        nes->execute_next_instruction();
 
         // Process SDL events
         SDL_Event e;

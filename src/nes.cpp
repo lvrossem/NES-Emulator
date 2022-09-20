@@ -2,21 +2,13 @@
 
 NES::NES() {
     std::cout << "INIT..." << std::endl;
-    cpu = new CPU();
-    ppu = new PPU();
     bus = new Bus();
 
-    cpu->set_bus(bus);
-    ppu->set_bus(bus);
-
     controller = new Controller();
-
     bus->attach_controller(controller);
 }
 
 NES::~NES() {
-    delete cpu;
-    delete ppu;
     delete bus;
     delete controller;
     delete cartridge;
@@ -113,19 +105,19 @@ bool NES::load_rom(const char* rom_path) {
 
     if (cartridge->nr_prg_rom_banks == 1) {
         // With only 1 PRG-ROM bank, write to both banks in memory
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[0], UPPER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[0], UPPER_PRG_ROM_START, 0x4000);
     } else if (cartridge->nr_prg_rom_banks == 2) {
         // With 2 PRG-ROM banks, write one to each bank in memory
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[1], UPPER_PRG_ROM_START, 0x4000);
     }
 
     if (cartridge->mapper_number == 2) {
         // UNROM Switch is used; load first and last PRG-ROM bank into memory
         uint8_t last_bank_index = cartridge->nr_prg_rom_banks - 1;
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
-        cpu->write_data_to_memory((uint8_t*) prg_rom_banks[last_bank_index], UPPER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[0], LOWER_PRG_ROM_START, 0x4000);
+        bus->write_array_to_memory((uint8_t*) prg_rom_banks[last_bank_index], UPPER_PRG_ROM_START, 0x4000);
     }
     
     std::cout << cartridge->is_valid_header << ", " << (int) cartridge->nr_prg_rom_banks << std::endl;
@@ -135,7 +127,7 @@ bool NES::load_rom(const char* rom_path) {
 }
 
 void NES::execute_next_instruction() {
-    cpu->execute_next_instruction();
+    bus->execute_next_instruction();
 }
 
 void NES::change_button(uint8_t button_index, bool pressed) {
